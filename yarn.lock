@@ -10190,6 +10190,11 @@
   "resolved" "https://registry.npm.taobao.org/vue-i18n/download/vue-i18n-8.18.2.tgz"
   "version" "8.18.2"
 
+"vue-infinite-scroll@^2.0.2":
+  "integrity" "sha1-yjepH+ku4K07dKz4aCwAkXFEtxE="
+  "resolved" "https://registry.npm.taobao.org/vue-infinite-scroll/download/vue-infinite-scroll-2.0.2.tgz"
+  "version" "2.0.2"
+
 "vue-loader@^15.7.1", "vue-loader@^15.9.2":
   "integrity" "sha1-rgH19MnGoEv/RIORLnLvkaQCwa4= sha512-oXBubaY//CYEISBlHX+c2YPJbmOH68xXPXjFv4MAgPqQvUsnjrBAjCJi8HXZ/r/yfn0tPL5VZj1Zcp8mJPI8VA=="
   "resolved" "https://registry.npm.taobao.org/vue-loader/download/vue-loader-15.9.2.tgz"

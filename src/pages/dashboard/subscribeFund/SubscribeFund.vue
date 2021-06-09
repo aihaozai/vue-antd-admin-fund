@@ -11,15 +11,36 @@
 <!--    </template>-->
     <template>
       <a-row style="margin: 0 -12px">
+        <a-col style="padding: 0 12px" :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
+          <a-card  class="fund-list-max-height beauty-scroll"  style="margin-bottom: 24px" :bordered="false" :body-style="{padding: 0}">
+            <a slot="extra">{{$t('fundList')}}</a>
+            <div
+              v-infinite-scroll="handleInfiniteOnLoad"
+              :infinite-scroll-disabled="busy"
+              :infinite-scroll-distance="10"
+            >
+              <a-list :data-source="fundList">
+                <a-list-item slot="renderItem" slot-scope="item">
+                  <a slot="actions">{{$t('subscribeOpera')}}</a>
+                  <a-list-item-meta :description="item['fundType']">
+                    <a slot="title" >{{ item['fundName'] }}</a>
+                    />
+                  </a-list-item-meta>
+                  <div>{{ item['fundCode'] }}</div>
+                </a-list-item>
+              </a-list>
+            </div>
+          </a-card>
+        </a-col>
         <a-col style="padding: 0 12px" :xl="16" :lg="24" :md="24" :sm="24" :xs="24">
-          <a-card class="project-list" :loading="loading" style="margin-bottom: 24px;" :bordered="false"  :body-style="{padding: 0}">
+          <a-card class="project-list fund-list-max-height beauty-scroll" :loading="loading" style="margin-bottom: 24px;" :bordered="false"  :body-style="{padding: 0}">
             <a slot="extra">{{$t('progress')}}</a>
             <div>
               <a-card-grid :key="i" v-for="(item, i) in fundData">
                 <a-card :bordered="false" :body-style="{padding: 0}">
                   <a-card-meta :description="item['fundCode']">
                     <div slot="title" class="card-title">
-                      <a-avatar size="small" />
+                      <a-icon type="fund" />
                       <span>{{item['fundName']}}</span>
                     </div>
                   </a-card-meta>
@@ -42,36 +63,7 @@
 <!--            </a-list>-->
 <!--          </a-card>-->
         </a-col>
-<!--        <a-col style="padding: 0 12px" :xl="8" :lg="24" :md="24" :sm="24" :xs="24">-->
-<!--          <a-card :title="$t('access')" style="margin-bottom: 24px" :bordered="false" :body-style="{padding: 0}">-->
-<!--            <div class="item-group">-->
-<!--              <a>操作一</a>-->
-<!--              <a>操作二</a>-->
-<!--              <a>操作三</a>-->
-<!--              <a>操作四</a>-->
-<!--              <a>操作五</a>-->
-<!--              <a>操作六</a>-->
-<!--              <a-button size="small" type="primary" ghost icon="plus">{{$t('add')}}</a-button>-->
-<!--            </div>-->
-<!--          </a-card>-->
-<!--          <a-card :loading="loading" :title="`XX ${$t('degree')}`" style="margin-bottom: 24px" :bordered="false" :body-style="{padding: 0}">-->
-<!--            <div style="min-height: 400px;">-->
-<!--              <radar />-->
-<!--            </div>-->
-<!--          </a-card>-->
-<!--          <a-card :loading="loading" :title="$t('team')" :bordered="false">-->
-<!--            <div class="members">-->
-<!--              <a-row>-->
-<!--                <a-col :span="12" v-for="(item, index) in teams" :key="index">-->
-<!--                  <a>-->
-<!--                    <a-avatar size="small" :src="item.avatar" />-->
-<!--                    <span class="member">{{item.name}}</span>-->
-<!--                  </a>-->
-<!--                </a-col>-->
-<!--              </a-row>-->
-<!--            </div>-->
-<!--          </a-card>-->
-<!--        </a-col>-->
+
       </a-row>
     </template>
   </page-layout>
@@ -79,6 +71,7 @@
 
 <script>
 import PageLayout from '@/layouts/PageLayout'
+import infiniteScroll from 'vue-infinite-scroll'
 // import HeadInfo from '@/components/tool/HeadInfo'
 // import Radar from '@/components/chart/Radar'
 import {mapState} from 'vuex'
@@ -87,6 +80,7 @@ import {request, METHOD} from '@/utils/request'
 export default {
   name: 'SubscribeFund',
   // components: {Radar, HeadInfo, PageLayout},
+  directives: { infiniteScroll },
   components: {PageLayout},
   i18n: require('./i18n'),
   data () {
@@ -98,7 +92,13 @@ export default {
       welcome: {
         timeFix: '',
         message: ''
-      }
+      },
+      fundListLoading: true,
+      busy: false,
+      fundList: [],
+      dataCount: 0,
+      fundListTotal: null,
+      fundListTitle: ['name','cosd']
     }
   },
   computed: {
@@ -113,7 +113,29 @@ export default {
         this.fundData = res.data.data;
         this.loading = false
       })
-  }
+  },
+  methods: {
+    fetchData(callback) {
+      request('http://localhost:7003/fund/fund/page', METHOD.POST, {'size':this.dataCount*10, 'current':(this.dataCount+1)*10}).then(res => {
+        callback(res);
+      })
+    },
+    handleInfiniteOnLoad() {
+      const data = this.fundList;
+      this.fundListLoading = true;
+      if (this.fundListTotal && data.total > 14) {
+        this.busy = true;
+        this.fundListLoading = false;
+        return;
+      }
+      this.fetchData(res => {
+        this.dataCount +=1;
+        this.fundList = data.concat(res.data.data['records']);
+        this.fundListTotal = data.concat(res.data.data['total']);
+        this.fundListLoading = false;
+      });
+    },
+  },
 }
 </script>
 
