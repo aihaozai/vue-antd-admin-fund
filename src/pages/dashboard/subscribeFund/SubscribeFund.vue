@@ -22,11 +22,14 @@
               <a-list :data-source="fundList">
                 <a-list-item slot="renderItem" slot-scope="item">
                   <a slot="actions">{{$t('subscribeOpera')}}</a>
-                  <a-list-item-meta :description="item['fundType']">
+                  <a-list-item-meta :description="item['fundType']+item['fundCode']">
                     <a slot="title" >{{ item['fundName'] }}</a>
                     />
                   </a-list-item-meta>
-                  <div>{{ item['fundCode'] }}</div>
+                  <div style="margin-left: 50px">{{ format(item['oneN']) }}</div>
+                  <div style="margin-left: 20px">{{ format(item['sixY']) }}</div>
+                  <div style="margin-left: 20px">{{ format(item['threeY']) }}</div>
+                  <div style="margin-left: 20px">{{ format(item['oneY']) }}</div>
                 </a-list-item>
               </a-list>
             </div>
@@ -116,7 +119,7 @@ export default {
   },
   methods: {
     fetchData(callback) {
-      request('http://localhost:7003/fund/fund/page', METHOD.POST, {'size':this.dataCount*10, 'current':(this.dataCount+1)*10}).then(res => {
+      request('http://localhost:7003/fund/fundDetail/page', METHOD.POST, {'size':this.dataCount*10, 'current':(this.dataCount+1)*10}).then(res => {
         callback(res);
       })
     },
@@ -135,6 +138,12 @@ export default {
         this.fundListLoading = false;
       });
     },
+    format(item){
+      if(item){
+        return item + '%'
+      }
+      return item;
+    }
   },
 }
 </script>
