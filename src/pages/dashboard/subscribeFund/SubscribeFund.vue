@@ -20,7 +20,7 @@
               :infinite-scroll-distance="10"
             >
               <a-list :data-source="fundList">
-                <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item slot="renderItem" slot-scope="item" style="margin-left: 10px">
                   <a slot="actions">{{$t('subscribeOpera')}}</a>
                   <a-list-item-meta :description="item['fundType']+item['fundCode']">
                     <a slot="title" >{{ item['fundName'] }}</a>

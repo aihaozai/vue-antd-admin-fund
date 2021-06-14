@@ -53,6 +53,11 @@ const options = {
               path: 'fundSub',
               name: '订阅基金',
               component: () => import('@/pages/dashboard/subscribeFund'),
+            },
+            {
+              path: 'fundChart',
+              name: '基金图表',
+              component: () => import('@/pages/dashboard/fundChart'),
             }
           ]
         },
