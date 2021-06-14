@@ -103,7 +103,7 @@ export default {
                     '<div class="g2-tooltip-value"></div>' +
                     '</div>'
           });
-          chart.line().position('gztime*gszzl').tooltip('gztime*gszzl', (a, b) => {
+          chart.line().position('gztime*gszzl').color("l(90) 0:#ff0000 0.5:#7ec2f3 1:#ff0000").tooltip('gztime*gszzl', (a, b) => {
             return {a, b}
           });
           chart.render();
