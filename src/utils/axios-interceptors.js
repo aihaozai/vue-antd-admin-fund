@@ -24,7 +24,11 @@ const resp401 = {
     const {message} = options
     const {response} = error
     if (response.status === 401) {
-      message.error('无此权限')
+     if(response.data['error_description']){
+       message.error(response.data['error_description'])
+     }else{
+       message.error('无此权限')
+     }
     }
     return Promise.reject(error)
   }
@@ -58,7 +62,7 @@ const reqCommon = {
   onFulfilled(config, options) {
     const {message} = options
     const {url, xsrfCookieName} = config
-    if (url.indexOf('login') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
+    if (url.indexOf('auth') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
       message.warning('认证 token 已过期，请重新登录')
     }
     return config
