@@ -75,9 +75,9 @@
 
 <script>
 import CommonLayout from '@/layouts/CommonLayout'
-import {getRoutesConfig} from '@/services/user'
+//import {getRoutesConfig} from '@/services/user'
 import {setAuthorization} from '@/utils/request'
-import {loadRoutes} from '@/utils/routerUtil'
+//import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 import {request, METHOD} from '@/utils/request'
 
@@ -107,7 +107,7 @@ export default {
           const password = this.form.getFieldValue('password')
           request( process.env.VUE_APP_API_BASE_URL_AUTH+'/oauth/token?grant_type=password&' +
                   'client_id=auth_simple&client_secret=haozai&username='+name+'&password='+password, METHOD.POST).then(res => {
-            console.log(res.data.data);
+            this.afterLogin(res);
           })
          // login(name, password).then(this.afterLogin)
         }
@@ -116,19 +116,23 @@ export default {
     afterLogin(res) {
       this.logging = false
       const loginRes = res.data
-      if (loginRes.code >= 0) {
-        const {user, permissions, roles} = loginRes.data
-        this.setUser(user)
-        this.setPermissions(permissions)
-        this.setRoles(roles)
-        setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
+      if (res.status >= 0) {
+         const {user} = loginRes
+         this.setUser(user)
+        // const {user, permissions, roles} = loginRes
+        // this.setUser(user)
+        // this.setPermissions(permissions)
+        // this.setRoles(roles)
+        setAuthorization({token: loginRes.access_token, expireAt: new Date(loginRes.expireAt)})
         // 获取路由配置
-        getRoutesConfig().then(result => {
-          const routesConfig = result.data.data
-          loadRoutes(routesConfig)
-          this.$router.push('/dashboard/workplace')
-          this.$message.success(loginRes.message, 3)
-        })
+        // getRoutesConfig().then(result => {
+        //   const routesConfig = result.data.data
+        //   loadRoutes(routesConfig)
+        //   this.$router.push('/dashboard/workplace')
+        //   this.$message.success('登录成功!', 3)
+        // })
+        this.$router.push('/dashboard/workplace')
+        this.$message.success('登录成功!', 3)
       } else {
         this.error = loginRes.message
       }
