@@ -56,7 +56,7 @@ export default {
   },
   mounted () {
     const __this = this;
-    request('http://localhost:7003/fund/fundReal/getFundRealData', METHOD.GET).then(res => {
+    request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundReal/getFundRealData', METHOD.GET).then(res => {
       this.loading = false
       const data = res.data.data;
       for (const obj in data) {

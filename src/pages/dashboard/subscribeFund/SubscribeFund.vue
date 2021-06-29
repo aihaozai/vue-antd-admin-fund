@@ -112,14 +112,14 @@ export default {
     request('/user/welcome', METHOD.GET).then(res => this.welcome = res.data)
     request('/work/activity', METHOD.GET).then(res => this.activities = res.data)
     request('/work/team', METHOD.GET).then(res => this.teams = res.data)
-    request('http://localhost:7003/fund/fund/getSubscribeFund', METHOD.GET).then(res => {
+    request( process.env.VUE_APP_API_BASE_URL_FUND + '/fund/getSubscribeFund', METHOD.GET).then(res => {
         this.fundData = res.data.data;
         this.loading = false
       })
   },
   methods: {
     fetchData(callback) {
-      request('http://localhost:7003/fund/fundDetail/page', METHOD.POST, {'size':this.dataCount*10, 'current':(this.dataCount+1)*10}).then(res => {
+      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/page', METHOD.POST, {'size':this.dataCount*10, 'current':(this.dataCount+1)*10}).then(res => {
         callback(res);
       })
     },
