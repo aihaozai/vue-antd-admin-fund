@@ -75,10 +75,11 @@ export default {
           chart.data(data[obj]['fundRealList']);
           chart.scale({
             'gztime': {
-              tickCount: 10
+              tickCount: 6
             },
             'gszzl': {
-              tickCount: 10
+              tickCount: 6,
+              ticks: data[obj]['yaxis']
             }
           });
           chart.axis('gztime', {
