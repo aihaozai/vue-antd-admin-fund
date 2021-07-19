@@ -108,8 +108,12 @@ export default {
           request( process.env.VUE_APP_API_BASE_URL_AUTH+'/oauth/token?grant_type=password&' +
                   'client_id=auth_simple&client_secret=haozai&username='+name+'&password='+password, METHOD.POST).then(res => {
             this.afterLogin(res);
-          })
+          }).catch(
+            this.logging = false
+          )
          // login(name, password).then(this.afterLogin)
+        }else{
+          this.logging = false
         }
       })
     },
@@ -123,7 +127,7 @@ export default {
         // this.setUser(user)
         // this.setPermissions(permissions)
         // this.setRoles(roles)
-        setAuthorization({token: loginRes.access_token, expireAt: new Date(loginRes.expireAt)})
+        setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)})
         // 获取路由配置
         // getRoutesConfig().then(result => {
         //   const routesConfig = result.data.data
