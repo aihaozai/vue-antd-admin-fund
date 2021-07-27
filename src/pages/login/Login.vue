@@ -105,6 +105,10 @@ export default {
           this.logging = true
           const name = this.form.getFieldValue('name')
           const password = this.form.getFieldValue('password')
+            axios({method: 'POST', url: process.env.VUE_APP_API_BASE_URL_AUTH+'/oauth/token?grant_type=password&username='+name+'&password='+password, auth: {'username': 'auth_simple','password': 'haozai'}}).then(res =>  this.afterLogin(res))
+                .catch(
+                    this.logging = false
+                )
           request( process.env.VUE_APP_API_BASE_URL_AUTH+'/oauth/token?grant_type=password&' +
                   'client_id=auth_simple&client_secret=haozai&username='+name+'&password='+password, METHOD.POST).then(res => {
             this.afterLogin(res);
