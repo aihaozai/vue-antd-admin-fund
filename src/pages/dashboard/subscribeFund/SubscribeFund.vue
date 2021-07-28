@@ -119,14 +119,15 @@ export default {
   },
   methods: {
     fetchData(callback) {
-      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/page', METHOD.POST, {'size':this.dataCount*10, 'current':(this.dataCount+1)*10}).then(res => {
+      console.log(this.dataCount)
+      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/page', METHOD.GET, {'current':this.dataCount+1, 'size':10}).then(res => {
         callback(res);
       })
     },
     handleInfiniteOnLoad() {
       const data = this.fundList;
       this.fundListLoading = true;
-      if (this.fundListTotal && data.total > 14) {
+      if (this.fundListTotal && data.length >= this.fundListTotal) {
         this.busy = true;
         this.fundListLoading = false;
         return;

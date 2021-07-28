@@ -116,7 +116,8 @@ export default {
     },
     afterLogin(res) {
       this.logging = false
-      const loginRes = res.data
+        console.log(res)
+      const loginRes = res.data.data
       if (res.status >= 0) {
          const {user} = loginRes
          this.setUser(user)
