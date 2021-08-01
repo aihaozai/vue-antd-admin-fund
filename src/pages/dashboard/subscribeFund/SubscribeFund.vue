@@ -21,7 +21,7 @@
             >
               <a-list :data-source="fundList">
                 <a-list-item slot="renderItem" slot-scope="item" style="margin-left: 10px">
-                  <a slot="actions">{{$t('subscribeOpera')}}</a>
+                  <a slot="actions" @click="subscribe(item['fundCode'])">{{$t('subscribeOpera')}}</a>
                   <a-list-item-meta :description="item['fundType']+item['fundCode']">
                     <a slot="title" >{{ item['fundName'] }}</a>
                     />
@@ -118,12 +118,9 @@ export default {
       })
   },
   methods: {
-    fetchData(callback) {
-      console.log(this.dataCount)
-      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/page', METHOD.GET, {'current':this.dataCount+1, 'size':10}).then(res => {
-        callback(res);
-      })
-    },
+    /**
+     * 加载更多
+     */
     handleInfiniteOnLoad() {
       const data = this.fundList;
       this.fundListLoading = true;
@@ -139,11 +136,31 @@ export default {
         this.fundListLoading = false;
       });
     },
+    /**
+     * 刷新数据回调
+     * @param callback
+     */
+    fetchData(callback) {
+      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/page', METHOD.GET, {'current':this.dataCount+1, 'size':10}).then(res => {
+        callback(res);
+      })
+    },
+    /**
+     * 格式化
+     * @param item
+     */
     format(item){
       if(item){
         return item + '%'
       }
       return item;
+    },
+    /**
+     * 订阅
+     * @param item
+     */
+    subscribe(fundCode){
+      request(process.env.VUE_APP_API_BASE_URL_FUND + '/fundSubscribe/subscribe?fundCode='+fundCode, METHOD.PUT)
     }
   },
 }

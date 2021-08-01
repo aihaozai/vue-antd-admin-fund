@@ -20,7 +20,8 @@ const AUTH_TYPE = {
 // http method
 const METHOD = {
   GET: 'get',
-  POST: 'post'
+  POST: 'post',
+  PUT: 'put'
 }
 
 /**
@@ -36,6 +37,8 @@ async function request(url, method, params, config) {
       return axios.get(url, {params, ...config})
     case METHOD.POST:
       return axios.post(url, params, config)
+    case METHOD.PUT:
+      return axios.put(url, params, config)
     default:
       return axios.get(url, {params, ...config})
   }
