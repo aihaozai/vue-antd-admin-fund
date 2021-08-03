@@ -160,7 +160,12 @@ export default {
      * @param item
      */
     subscribe(fundCode){
-      request(process.env.VUE_APP_API_BASE_URL_FUND + '/fundSubscribe/subscribe?fundCode='+fundCode, METHOD.PUT)
+      request(process.env.VUE_APP_API_BASE_URL_FUND + '/fundSubscribe/subscribe?fundCode='+fundCode, METHOD.PUT).then(res => {
+        const data = res.data;
+        if(data&&data.success){
+          this.$message.success(`订阅成功`)
+        }
+      })
     }
   },
 }
