@@ -7,7 +7,7 @@ module.exports = {
       progress: '已订阅',
       fundList:'基金列表',
       subscribeOpera: '订阅',
-      unSubscribeOpera: '取消订阅订阅',
+      unSubscribeOpera: '取消订阅',
       access: '快速开始/便捷导航',
       dynamic: '动态',
       degree: '指数',

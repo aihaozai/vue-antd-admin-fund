@@ -21,7 +21,7 @@
             >
               <a-list :data-source="fundList">
                 <a-list-item slot="renderItem" slot-scope="item" style="margin-left: 10px">
-                  <a slot="actions" @click="subscribe(item['fundCode'])">{{$t('subscribeOpera')}}</a>
+                  <a slot="actions" @click="subscribe(item)">{{item['subscribeId'] ? $t('unSubscribeOpera'): $t('subscribeOpera')}}</a>
                   <a-list-item-meta :description="item['fundType']+item['fundCode']">
                     <a slot="title" >{{ item['fundName'] }}</a>
                     />
@@ -112,10 +112,7 @@ export default {
     request('/user/welcome', METHOD.GET).then(res => this.welcome = res.data)
     request('/work/activity', METHOD.GET).then(res => this.activities = res.data)
     request('/work/team', METHOD.GET).then(res => this.teams = res.data)
-    request( process.env.VUE_APP_API_BASE_URL_FUND + '/fund/getSubscribeFund', METHOD.GET).then(res => {
-        this.fundData = res.data.data;
-        this.loading = false
-      })
+    this.subscribeList();
   },
   methods: {
     /**
@@ -141,7 +138,7 @@ export default {
      * @param callback
      */
     fetchData(callback) {
-      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/page', METHOD.GET, {'current':this.dataCount+1, 'size':10}).then(res => {
+      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fundDetail/subscribePage', METHOD.GET, {'current':this.dataCount+1, 'size':10}).then(res => {
         callback(res);
       })
     },
@@ -159,12 +156,30 @@ export default {
      * 订阅
      * @param item
      */
-    subscribe(fundCode){
-      request(process.env.VUE_APP_API_BASE_URL_FUND + '/fundSubscribe/subscribe?fundCode='+fundCode, METHOD.PUT).then(res => {
-        const data = res.data;
-        if(data&&data.success){
-          this.$message.success(`订阅成功`)
-        }
+    subscribe(item){
+      if(item['subscribeId']){
+        request(process.env.VUE_APP_API_BASE_URL_FUND + '/fundSubscribe/unSubscribe?subscribeId='+item['subscribeId'], METHOD.DELETE).then(res => {
+          const data = res.data;
+          if(data&&data.success){
+            this.$message.success(`已取消订阅`);
+            this.subscribeList();
+          }
+        })
+      }else{
+        request(process.env.VUE_APP_API_BASE_URL_FUND + '/fundSubscribe/subscribe?fundCode='+item['fundCode'], METHOD.PUT).then(res => {
+          const data = res.data;
+          if(data&&data.success){
+            this.$message.success(`订阅成功`);
+            this.subscribeList();
+          }
+        })
+      }
+    },
+
+    subscribeList(){
+      request( process.env.VUE_APP_API_BASE_URL_FUND + '/fund/getSubscribeFund', METHOD.GET).then(res => {
+        this.fundData = res.data.data;
+        this.loading = false
       })
     }
   },

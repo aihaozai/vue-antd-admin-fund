@@ -21,7 +21,8 @@ const AUTH_TYPE = {
 const METHOD = {
   GET: 'get',
   POST: 'post',
-  PUT: 'put'
+  PUT: 'put',
+  DELETE: 'delete'
 }
 
 /**
@@ -39,6 +40,8 @@ async function request(url, method, params, config) {
       return axios.post(url, params, config)
     case METHOD.PUT:
       return axios.put(url, params, config)
+    case METHOD.DELETE:
+      return axios.delete(url, config)
     default:
       return axios.get(url, {params, ...config})
   }
