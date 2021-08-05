@@ -100,8 +100,7 @@ export default {
       busy: false,
       fundList: [],
       dataCount: 0,
-      fundListTotal: null,
-      fundListTitle: ['name','cosd']
+      fundListTotal: null
     }
   },
   computed: {
@@ -163,6 +162,10 @@ export default {
           if(data&&data.success){
             this.$message.success(`已取消订阅`);
             this.subscribeList();
+            this.fundList = [];
+            this.dataCount =  0;
+            this.fundListTotal = null;
+            this.handleInfiniteOnLoad();
           }
         })
       }else{
@@ -171,12 +174,17 @@ export default {
           if(data&&data.success){
             this.$message.success(`订阅成功`);
             this.subscribeList();
+            this.fundList = [];
+            this.dataCount =  0;
+            this.fundListTotal = null;
+            this.handleInfiniteOnLoad();
           }
         })
       }
     },
 
     subscribeList(){
+      this.loading = true
       request( process.env.VUE_APP_API_BASE_URL_FUND + '/fund/getSubscribeFund', METHOD.GET).then(res => {
         this.fundData = res.data.data;
         this.loading = false
