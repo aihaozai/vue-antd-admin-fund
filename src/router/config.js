@@ -90,6 +90,21 @@ const options = {
           ]
         },
         {
+          path: 'system',
+          name: '系统管理',
+          meta: {
+            icon: 'appstore'
+          },
+          component: PageView,
+          children: [
+            {
+              path: 'user',
+              name: '用户列表',
+              component: () => import('@/pages/system/user/UserList'),
+            }
+          ]
+        },
+        {
           path: 'list',
           name: '列表页',
           meta: {
