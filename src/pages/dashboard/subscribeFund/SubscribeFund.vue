@@ -1,14 +1,5 @@
 <template>
   <page-layout :avatar="currUser.avatar">
-<!--    <div slot="headerContent">-->
-<!--      <div class="title">{{welcome.timeFix[lang]}}，{{currUser.name}}，{{welcome.message[lang]}}</div>-->
-<!--      <div>{{currUser.position[lang]}}</div>-->
-<!--    </div>-->
-<!--    <template slot="extra">-->
-<!--      <head-info class="split-right" :title="$t('project')" content="56"/>-->
-<!--      <head-info class="split-right" :title="$t('ranking')" content="8/24"/>-->
-<!--      <head-info class="split-right" :title="$t('visit')" content="2,223"/>-->
-<!--    </template>-->
     <template>
       <a-row style="margin: 0 -12px">
         <a-col style="padding: 0 12px" :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
@@ -54,17 +45,6 @@
               </a-card-grid>
             </div>
           </a-card>
-<!--          <a-card :loading="loading" :title="$t('dynamic')" :bordered="false">-->
-<!--            <a-list>-->
-<!--              <a-list-item :key="index" v-for="(item, index) in activities">-->
-<!--                <a-list-item-meta>-->
-<!--                  <a-avatar slot="avatar" :src="item.user.avatar" />-->
-<!--                  <div slot="title" v-html="item.template" />-->
-<!--                  <div slot="description">9小时前</div>-->
-<!--                </a-list-item-meta>-->
-<!--              </a-list-item>-->
-<!--            </a-list>-->
-<!--          </a-card>-->
         </a-col>
 
       </a-row>
@@ -75,14 +55,11 @@
 <script>
 import PageLayout from '@/layouts/PageLayout'
 import infiniteScroll from 'vue-infinite-scroll'
-// import HeadInfo from '@/components/tool/HeadInfo'
-// import Radar from '@/components/chart/Radar'
 import {mapState} from 'vuex'
 import {request, METHOD} from '@/utils/request'
 
 export default {
   name: 'SubscribeFund',
-  // components: {Radar, HeadInfo, PageLayout},
   directives: { infiniteScroll },
   components: {PageLayout},
   i18n: require('./i18n'),
