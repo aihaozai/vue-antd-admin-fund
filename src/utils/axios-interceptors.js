@@ -24,8 +24,8 @@ const resp401 = {
     const {message} = options
     const {response} = error
     if (response.status === 401) {
-     if(response.data['error_description']){
-       message.error(response.data['error_description'])
+     if(response.data.data['error_description']){
+       message.error(response.data.data['error_description'])
      }else{
        message.error('无此权限')
      }
