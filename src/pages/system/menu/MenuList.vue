@@ -139,7 +139,7 @@
     </div>
       <a-modal
               v-model="modalVisible"
-              title="新增菜单"
+              :title="$t('addMenu')"
               centered
               :maskClosable="false"
               @cancel="() => closeModel()"
@@ -200,6 +200,7 @@ for (let i = 0; i < 100; i++) {
 export default {
   name: 'QueryList',
   components: {StandardTable,AddMenu},
+  i18n: require('./i18n'),
   data () {
     return {
       advanced: true,
