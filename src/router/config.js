@@ -101,7 +101,12 @@ const options = {
               path: 'user',
               name: '用户列表',
               component: () => import('@/pages/system/user/UserList'),
-            }
+            },
+            {
+              path: 'menu',
+              name: '菜单列表',
+              component: () => import('@/pages/system/menu/MenuList'),
+            },
           ]
         },
         {
@@ -116,7 +121,7 @@ const options = {
               path: 'query',
               name: '查询表格',
               meta: {
-                authority: 'queryForm',
+                // authority: 'queryForm',
               },
               component: () => import('@/pages/list/QueryList'),
             },
