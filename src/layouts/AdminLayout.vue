@@ -19,7 +19,7 @@
           <slot></slot>
         </div>
       </a-layout-content>
-      <a-layout-footer style="padding: 0px">
+      <a-layout-footer style="padding: 0px" v-if="layoutFooter">
         <page-footer :link-list="footerLinks" :copyright="copyright" />
       </a-layout-footer>
     </a-layout>
@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     ...mapState('setting', ['isMobile', 'theme', 'layout', 'footerLinks', 'copyright', 'fixedHeader', 'fixedSideBar',
-      'fixedTabs', 'hideSetting', 'multiPage']),
+      'fixedTabs', 'hideSetting', 'multiPage', 'layoutFooter']),
     ...mapGetters('setting', ['firstMenu', 'subMenu', 'menuData']),
     sideMenuWidth() {
       return this.collapsed ? '80px' : '256px'

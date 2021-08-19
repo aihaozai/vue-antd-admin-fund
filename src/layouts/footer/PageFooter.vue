@@ -2,10 +2,11 @@
   <div class="footer">
     <div class="links">
       <a target="_blank" :key="index" :href="item.link ? item.link : 'javascript: void(0)'" v-for="(item, index) in linkList">
+        <img v-if="item.img==='beian'" src="@/assets/img/beian.png"/>
         <a-icon v-if="item.icon" :type="item.icon"/>{{item.name}}
       </a>
     </div>
-    <div class="copyright">
+    <div class="copyright" v-if="copyright">
       <a-icon type="copyright" />{{copyright}}
     </div>
   </div>

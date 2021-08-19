@@ -1,137 +1,86 @@
 <template>
   <a-form-model
-          ref="ruleForm"
-          :model="form"
-          :rules="rules"
-          :layout="'vertical'"
+      ref="ruleForm"
+      :model="form"
+      :rules="rules"
+      :layout="'vertical'"
   >
-    <a-form-model-item ref="menuName" :label="$t('menuName')" prop="menuName">
-      <a-input
-              v-model="form.menuName"
-              @blur="
-          () => {
-            $refs.menuName.onFieldBlur();
-          }
-        "
-      />
-    </a-form-model-item>
-    <a-form-model-item label="Activity zone" prop="region">
-      <a-select
-              placeholder="Inserted are removed"
-              :value="selectedItems"
+      <a-form-model-item ref="menuName" :label="$t('menuName')" prop="menuName">
+          <a-input
+                  v-model="form.menuName"
+                  @blur="() => {$refs.menuName.onFieldBlur();}"
+                  allow-clear
+          />
+      </a-form-model-item>
+      <a-form-model-item ref="pid" :label="$t('parentMenu')" prop="pid">
+          <a-select
+              :placeholder="$t('parentMenuMsg')"
+              v-model="form.pid"
               style="width: 100%"
               @change="handleChange"
-      >
-        <a-select-option v-for="item in filteredOptions" :key="item" :value="item">
-          {{ item }}
-        </a-select-option>
-      </a-select>
-      <a-select v-model="form.region" placeholder="please select your zone">
-        <a-select-option value="shanghai">
-          Zone one
-        </a-select-option>
-        <a-select-option value="beijing">
-          Zone two
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-    <a-form-model-item label="Activity time" required prop="date1">
-      <a-date-picker
-              v-model="form.date1"
-              show-time
-              type="date"
-              placeholder="Pick a date"
-              style="width: 100%;"
-      />
-    </a-form-model-item>
-    <a-form-model-item label="Instant delivery" prop="delivery">
-      <a-switch v-model="form.delivery" />
-    </a-form-model-item>
-    <a-form-model-item label="Activity type" prop="type">
-      <a-checkbox-group v-model="form.type">
-        <a-checkbox value="1" name="type">
-          Online
-        </a-checkbox>
-        <a-checkbox value="2" name="type">
-          Promotion
-        </a-checkbox>
-        <a-checkbox value="3" name="type">
-          Offline
-        </a-checkbox>
-      </a-checkbox-group>
-    </a-form-model-item>
-    <a-form-model-item label="Resources" prop="resource">
-      <a-radio-group v-model="form.resource">
-        <a-radio value="1">
-          Sponsor
-        </a-radio>
-        <a-radio value="2">
-          Venue
-        </a-radio>
-      </a-radio-group>
-    </a-form-model-item>
-    <a-form-model-item label="Activity form" prop="desc">
-      <a-input v-model="form.desc" type="textarea" />
-    </a-form-model-item>
-    <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-      <a-button type="primary" @click="onSubmit">
-        Create
-      </a-button>
-      <a-button style="margin-left: 10px;" @click="resetForm">
-        Reset
-      </a-button>
-    </a-form-model-item>
+              allow-clear
+           >
+            <a-select-option v-for="item in filteredOptions" :key="item.code" :value="item.code">
+              {{ item.label }}
+            </a-select-option>
+          </a-select>
+      </a-form-model-item>
+      <a-form-model-item ref="menuUrl" :label="$t('menuUrl')" prop="menuUrl">
+              <a-input
+                      v-model="form.menuUrl"
+                      @blur="() => {$refs.menuUrl.onFieldBlur();}"
+                      allow-clear
+              />
+      </a-form-model-item>
+      <a-form-model-item ref="menuIcon" :label="$t('menuIcon')" prop="menuIcon">
+          <a-input
+                  v-model="form.menuIcon"
+                  @blur="() => {$refs.menuIcon.onFieldBlur();}"
+                  allow-clear
+          />
+      </a-form-model-item>
+      <a-form-model-item ref="sort" :label="$t('sort')" prop="sort">
+          <a-input
+                  v-model="form.sort"
+                  @blur="() => {$refs.sort.onFieldBlur();}"
+                  allow-clear type="number"
+          />
+      </a-form-model-item>
   </a-form-model>
 </template>
 
 <script>
-const OPTIONS = ['Apples', 'Nails', 'Bananas', 'Helicopters'];
+const OPTIONS = [{'code':'0','label':'根目录'}];
 export default {
   name: 'AddMenu',
   components: {},
   i18n: require('./i18n'),
   data() {
     return {
-      selectedItems: [],
       form: {
-        name: '',
-        region: undefined,
-        date1: undefined,
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: '',
+        id: '',
+        menuName: '',
+        pid: '',
+        menuUrl: '',
+        menuIcon: '',
+        sort: '',
       },
       rules: {
         menuName: [
-          { required: true, message: 'Please input Activity name', trigger: 'blur' },
-          { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+          { required: true, message: this.$i18n.t('menuNameMsg'), trigger: 'blur' },
+          { min: 2, max: 16, message: this.$i18n.t('menuLengthMsg'), trigger: 'blur' },
         ],
-        region: [{ required: true, message: 'Please select Activity zone', trigger: 'change' }],
-        date1: [{ required: true, message: 'Please pick a date', trigger: 'change' }],
-        type: [
-          {
-            type: 'array',
-            required: true,
-            message: 'Please select at least one activity type',
-            trigger: 'change',
-          },
-        ],
-        resource: [
-          { required: true, message: 'Please select activity resource', trigger: 'change' },
-        ],
-        desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }],
+        pid: [{ required: true, message: this.$i18n.t('parentMenuMsg'), trigger: 'change' }],
       },
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit(callback) {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          alert('submit!');
+            callback(this.form);
         } else {
-          console.log('error submit!!');
-          return false;
+            callback(false);
         }
       });
     },
@@ -139,12 +88,13 @@ export default {
       this.$refs.ruleForm.resetFields();
     },
     handleChange(selectedItems) {
-      this.selectedItems = selectedItems;
+        console.log(selectedItems)
     },
   },
   computed: {
     filteredOptions() {
-      return OPTIONS.filter(o => !this.selectedItems.includes(o));
+        console.log(this.form.pid)
+        return OPTIONS.filter(o => !o.code==this.form.pid);
     },
   },
 }

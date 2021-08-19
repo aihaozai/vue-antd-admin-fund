@@ -143,9 +143,9 @@
               centered
               :maskClosable="false"
               @cancel="() => closeModel()"
-              @ok="() => closeModel()"
+              @ok="() => onSubmit()"
       >
-      <add-menu></add-menu>
+      <add-menu ref="addMenu"></add-menu>
     </a-modal>
   </a-card>
 </template>
@@ -153,6 +153,8 @@
 <script>
 import StandardTable from '@/components/table/StandardTable'
 import AddMenu from '@/pages/system/menu/AddMenu'
+import {request, METHOD} from '@/utils/request'
+
 const columns = [
   {
     title: '规则编号',
@@ -248,7 +250,21 @@ export default {
     onSelect(selectedKeys, info) {
       console.log('selected', selectedKeys, info);
     },
+    onSubmit(){
+      this.$refs.addMenu.onSubmit(param=>{
+        if(param){
+          request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/add', METHOD.POST, param).then(res => {
+            const data = res.data;
+            if(data&&data.success){
+              this.modalVisible = false;
+              this.$message.success(`添加成功`);
+            }
+          })
+        }
+      })
+    },
     closeModel(){
+      this.$refs.addMenu.resetForm();
       this.modalVisible = false;
     }
   }

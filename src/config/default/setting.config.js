@@ -29,7 +29,8 @@ module.exports = {
   },
   footerLinks: [                        //页面底部链接，{link: '链接地址', name: '名称/显示文字', icon: '图标，支持 ant design vue 图标库'}
     {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号'},
-    // {link: 'https://github.com/iczer/vue-antd-admin', icon: 'github'},
+    {link: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44078102440951', name: '粤公网安备 44078102440951号', img:'beian'},
     // {link: 'https://ant.design', name: 'Ant Design'}
   ],
+  layoutFooter: false                   //页面底部是否显示
 }
