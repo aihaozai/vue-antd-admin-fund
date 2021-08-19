@@ -112,8 +112,8 @@
                  @change="onChange"
                  @selectedRowChange="onSelectChange"
          >
-           <div slot="description" slot-scope="{text}">
-             {{text}}
+           <div slot="menuIcon" slot-scope="{text}">
+             <a-icon style="font-size: large" :type="text" />
            </div>
            <div slot="action" slot-scope="{text, record}">
              <a style="margin-right: 8px">
@@ -157,27 +157,22 @@ import {request, METHOD} from '@/utils/request'
 
 const columns = [
   {
-    title: '规则编号',
-    dataIndex: 'no'
+    title: '菜单名称',
+    dataIndex: 'menuName'
   },
   {
-    title: '描述',
-    dataIndex: 'description',
-    scopedSlots: { customRender: 'description' }
+    title: '菜单路径',
+    dataIndex: 'menuUrl'
   },
   {
-    title: '服务调用次数',
-    dataIndex: 'callNo',
-    sorter: true,
-    customRender: (text) => text + ' 次'
+    title: '菜单图标',
+    dataIndex: 'menuIcon',
+    align: 'center',
+    scopedSlots: { customRender: 'menuIcon' }
   },
   {
-    dataIndex: 'status',
-    slots: {title: 'statusTitle'}
-  },
-  {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
+    title: '排序',
+    dataIndex: 'sort',
     sorter: true
   },
   {
@@ -185,19 +180,6 @@ const columns = [
     scopedSlots: { customRender: 'action' }
   }
 ]
-
-const dataSource = []
-
-for (let i = 0; i < 100; i++) {
-  dataSource.push({
-    key: i,
-    no: 'NO ' + i,
-    description: '这是一段描述',
-    callNo: Math.floor(Math.random() * 1000),
-    status: Math.floor(Math.random() * 10) % 4,
-    updatedAt: '2018-07-26'
-  })
-}
 
 export default {
   name: 'QueryList',
@@ -207,13 +189,20 @@ export default {
     return {
       advanced: true,
       columns: columns,
-      dataSource: dataSource,
+      dataSource: [],
       selectedRows: [],
       modalVisible: false,
     }
   },
   authorize: {
     deleteRecord: 'delete'
+  },
+  created() {
+    request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/page', METHOD.GET, {'current':1, 'size':10}).then(res => {
+      if(res.data.data){
+        this.dataSource = res.data.data['records'];
+      }
+    })
   },
   methods: {
     deleteRecord(key) {
