@@ -148,7 +148,17 @@ const routerMap = {
   palette: {
     name: '颜色复选框',
     component: () => import('@/pages/components/Palette')
-  }
+  },
+  user: {
+    path: 'user',
+    name: '用户管理',
+    component: () => import('@/pages/system/user/UserList'),
+  },
+  menu: {
+    path: 'menu',
+    name: '菜单管理',
+    component: () => import('@/pages/system/menu/MenuList'),
+  },
 }
 export default routerMap
 

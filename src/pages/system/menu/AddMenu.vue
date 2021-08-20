@@ -5,10 +5,10 @@
       :rules="rules"
       :layout="'vertical'"
   >
-      <a-form-model-item ref="menuName" :label="$t('menuName')" prop="menuName">
+      <a-form-model-item ref="name" :label="$t('name')" prop="name">
           <a-input
-                  v-model="form.menuName"
-                  @blur="() => {$refs.menuName.onFieldBlur();}"
+                  v-model="form.name"
+                  @blur="() => {$refs.name.onFieldBlur();}"
                   allow-clear
           />
       </a-form-model-item>
@@ -26,17 +26,24 @@
             </a-select-option>
           </a-select>
       </a-form-model-item>
-      <a-form-model-item ref="menuUrl" :label="$t('menuUrl')" prop="menuUrl">
+      <a-form-model-item ref="path" :label="$t('path')" prop="path">
               <a-input
-                      v-model="form.menuUrl"
-                      @blur="() => {$refs.menuUrl.onFieldBlur();}"
+                      v-model="form.path"
+                      @blur="() => {$refs.path.onFieldBlur();}"
                       allow-clear
               />
       </a-form-model-item>
-      <a-form-model-item ref="menuIcon" :label="$t('menuIcon')" prop="menuIcon">
+      <a-form-model-item ref="component" :label="$t('component')" prop="component">
           <a-input
-                  v-model="form.menuIcon"
-                  @blur="() => {$refs.menuIcon.onFieldBlur();}"
+                  v-model="form.component"
+                  @blur="() => {$refs.component.onFieldBlur();}"
+                  allow-clear
+          />
+      </a-form-model-item>
+      <a-form-model-item ref="icon" :label="$t('icon')" prop="icon">
+          <a-input
+                  v-model="form.icon"
+                  @blur="() => {$refs.icon.onFieldBlur();}"
                   allow-clear
           />
       </a-form-model-item>
@@ -61,20 +68,24 @@ export default {
           OPTIONS: [{'code':'0','label':'根目录'}],
           form: {
                 id: '',
-                menuName: '',
+                name: '',
                 pid: '',
                 pName: '',
-                menuUrl: '',
-                menuIcon: '',
+                path: '',
+                component: '',
+                icon: '',
                 sort: '',
           },
           rules: {
-              menuName: [
-              { required: true, message: this.$i18n.t('menuNameMsg'), trigger: 'blur' },
-              { min: 2, max: 16, message: this.$i18n.t('menuLengthMsg'), trigger: 'blur' },
+              name: [
+              { required: true, message: this.$i18n.t('nameMsg'), trigger: 'blur' },
+              { max: 16, message: this.$i18n.t('lengthMsg16'), trigger: 'blur' },
               ],
               pid: [{ required: true, message: this.$i18n.t('parentMenuMsg'), trigger: 'change' }],
               pName: [{ required: true, message: this.$i18n.t('parentMenuMsg'), trigger: 'change' }],
+              path: [{ max: 10, message: this.$i18n.t('lengthMsg10'), trigger: 'blur' }],
+              component: [{ max: 60, message: this.$i18n.t('lengthMsg60'), trigger: 'blur' }],
+              icon: [{ max: 15, message: this.$i18n.t('lengthMsg15'), trigger: 'blur' }],
           },
       };
   },

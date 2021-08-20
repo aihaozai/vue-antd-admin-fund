@@ -77,7 +77,7 @@
 import CommonLayout from '@/layouts/CommonLayout'
 //import {getRoutesConfig} from '@/services/user'
 import {setAuthorization} from '@/utils/request'
-//import {loadRoutes} from '@/utils/routerUtil'
+import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 import axios from 'axios'
 export default {
@@ -110,13 +110,12 @@ export default {
             auth: {'username': 'auth_simple','password': 'haozai'}
           }).then(res => this.afterLogin(res))
             .catch(this.logging = false)
-         // login(name, password).then(this.afterLogin)
         }
       })
     },
     afterLogin(res) {
       this.logging = false
-        console.log(res)
+      console.log(res)
       const loginRes = res.data.data
       if (res.status >= 0) {
          const {user} = loginRes
@@ -126,14 +125,48 @@ export default {
         // this.setPermissions(permissions)
         // this.setRoles(roles)
         setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)})
-        // 获取路由配置
+        //获取路由配置
         // getRoutesConfig().then(result => {
         //   const routesConfig = result.data.data
         //   loadRoutes(routesConfig)
         //   this.$router.push('/dashboard/workplace')
         //   this.$message.success('登录成功!', 3)
         // })
-        this.$router.push('/dashboard/workplace')
+        loadRoutes([
+          {
+            path: '/login',
+            name: '登录页',
+            component: () => import('@/pages/login')
+          },{
+            path: '/',
+            name: '首页',
+            component: () => import('@/layouts/tabs/TabsView'),
+            redirect: '/login',
+            children: [
+              {
+                path: 'system',
+                name: '系统管理',
+                meta: {
+                  icon: 'appstore'
+                },
+                component: () => import('@/layouts/PageView'),
+                children: [
+                  {
+                    path: 'user',
+                    name: '用户列表',
+                    component: () => import('@/pages/system/user/UserList'),
+                  },
+                  {
+                    path: 'menu',
+                    name: '菜单列表',
+                    component: () => import('@/pages/system/menu/MenuList'),
+                  },
+                ]
+              },
+            ]
+          },])
+        this.$router.push('/system/user')
+        //this.$router.push('/dashboard/workplace')
         this.$message.success('登录成功!', 3)
       } else {
         this.error = loginRes.message

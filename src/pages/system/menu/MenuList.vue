@@ -81,7 +81,7 @@
     <div>
       <a-space class="operator">
         <a-button @click="addNew" type="primary">新建</a-button>
-        <a-button @click="addNew" type="danger">批量删除</a-button>
+        <a-button @click="addNew" type="danger">删除</a-button>
       </a-space>
       <div>
         <div  style="float: left;width: 12%;margin-right: 10px" >
@@ -112,7 +112,7 @@
                  @change="onChange"
                  @selectedRowChange="onSelectChange"
          >
-           <div slot="menuIcon" slot-scope="{text}">
+           <div slot="icon" slot-scope="{text}">
              <a-icon style="font-size: large" :type="text" />
            </div>
            <div slot="action" slot-scope="{text, record}">
@@ -158,17 +158,21 @@ import {request, METHOD} from '@/utils/request'
 const columns = [
   {
     title: '菜单名称',
-    dataIndex: 'menuName'
+    dataIndex: 'name'
   },
   {
     title: '菜单路径',
-    dataIndex: 'menuUrl'
+    dataIndex: 'path'
+  },
+  {
+    title: '菜单部件',
+    dataIndex: 'component'
   },
   {
     title: '菜单图标',
-    dataIndex: 'menuIcon',
+    dataIndex: 'icon',
     align: 'center',
-    scopedSlots: { customRender: 'menuIcon' }
+    scopedSlots: { customRender: 'icon' }
   },
   {
     title: '排序',
@@ -198,7 +202,7 @@ export default {
     deleteRecord: 'delete'
   },
   created() {
-    request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/page', METHOD.GET, {'current':1, 'size':10}).then(res => {
+    request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/treePage', METHOD.GET, {'current':1, 'size':10}).then(res => {
       if(res.data.data){
         this.dataSource = res.data.data['records'];
       }
