@@ -12,10 +12,10 @@
                   allow-clear
           />
       </a-form-model-item>
-      <a-form-model-item ref="pName" :label="$t('parentMenu')" prop="pName">
+      <a-form-model-item ref="pid" :label="$t('parentMenu')" prop="pid">
           <a-select
               :placeholder="$t('parentMenuMsg')"
-              v-model="form.pName"
+              v-model="form.pid"
               style="width: 100%"
               @change="handleChange"
               allow-clear
@@ -63,6 +63,13 @@ export default {
   name: 'AddMenu',
   components: {},
   i18n: require('./i18n'),
+    props: {
+        record: {
+            type: Object,
+            required: false,
+            default: null
+        },
+    },
   data() {
       return {
           OPTIONS: [{'code':'0','label':'根目录'}],
@@ -82,7 +89,6 @@ export default {
               { max: 16, message: this.$i18n.t('lengthMsg16'), trigger: 'blur' },
               ],
               pid: [{ required: true, message: this.$i18n.t('parentMenuMsg'), trigger: 'change' }],
-              pName: [{ required: true, message: this.$i18n.t('parentMenuMsg'), trigger: 'change' }],
               path: [{ max: 10, message: this.$i18n.t('lengthMsg10'), trigger: 'blur' }],
               component: [{ max: 60, message: this.$i18n.t('lengthMsg60'), trigger: 'blur' }],
               icon: [{ max: 15, message: this.$i18n.t('lengthMsg15'), trigger: 'blur' }],
@@ -93,9 +99,12 @@ export default {
       request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/select', METHOD.GET).then(res => {
           if(res.data.data){
               this.OPTIONS = this.OPTIONS.concat(res.data.data);
-              console.log(this.OPTIONS)
+              if(this.record){
+                  this.OPTIONS = this.OPTIONS.filter(o =>!(o.code===this.record.id) );
+              }
           }
-      })
+      });
+      this.setForm();
   },
   methods: {
       onSubmit(callback) {
@@ -113,11 +122,16 @@ export default {
       handleChange(selectedItems) {
           this.form.pid = selectedItems
       },
+      setForm() {
+          if(this.record){
+              this.form = this.record;
+          }
+      },
+  },
+  mounted(){
+
   },
   computed: {
-      // filteredOptions() {
-      //     return this.OPTIONS.filter(o => !o.code==this.form.pid);
-      // },
   },
 }
 </script>

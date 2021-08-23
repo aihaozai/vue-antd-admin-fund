@@ -21,6 +21,11 @@ const options = {
       component: () => import('@/pages/exception/403'),
     },
     {
+      path: '/500',
+      name: '500',
+      component: () => import('@/pages/exception/500'),
+    },
+    {
       path: '/',
       name: '首页',
       component: TabsView,
@@ -87,26 +92,6 @@ const options = {
               name: '高级表单',
               component: () => import('@/pages/form/advance'),
             }
-          ]
-        },
-        {
-          path: 'system',
-          name: '系统管理',
-          meta: {
-            icon: 'appstore'
-          },
-          component: PageView,
-          children: [
-            {
-              path: 'user',
-              name: '用户列表',
-              component: () => import('@/pages/system/user/UserList'),
-            },
-            {
-              path: 'menu',
-              name: '菜单列表',
-              component: () => import('@/pages/system/menu/MenuList'),
-            },
           ]
         },
         {
@@ -306,7 +291,33 @@ const options = {
             icon: 'file-word',
             link: 'https://iczer.gitee.io/vue-antd-admin-docs/'
           }
-        }
+        },
+        {
+          path: 'system',
+          name: '系统管理',
+          meta: {
+            icon: 'appstore'
+          },
+          component: PageView,
+          children: [
+            {
+              path: 'user',
+              name: '用户列表',
+              meta: {
+                icon: 'user'
+              },
+              component: () => import('@/pages/system/user/UserList'),
+            },
+            {
+              path: 'menu',
+              name: '菜单列表',
+              meta: {
+                icon: 'menu'
+              },
+              component: () => import('@/pages/system/menu/MenuList'),
+            },
+          ]
+        },
       ]
     },
   ]

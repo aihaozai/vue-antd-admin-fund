@@ -84,57 +84,60 @@
         <a-button @click="addNew" type="danger">删除</a-button>
       </a-space>
       <div>
-        <div  style="float: left;width: 12%;margin-right: 10px" >
-          <a-tree show-line :default-expanded-keys="['0-0-0']" @select="onSelect">
-            <a-icon slot="switcherIcon" type="down" />
-            <a-tree-node key="0-0" title="parent 1">
-              <a-tree-node key="0-0-0" title="parent 1-0">
-                <a-tree-node key="0-0-0-0" title="leaf" />
-                <a-tree-node key="0-0-0-1" title="leaf" />
-                <a-tree-node key="0-0-0-2" title="leaf" />
-              </a-tree-node>
-              <a-tree-node key="0-0-1" title="parent 1-1">
-                <a-tree-node key="0-0-1-0" title="leaf" />
-              </a-tree-node>
-              <a-tree-node key="0-0-2" title="parent 1-2">
-                <a-tree-node key="0-0-2-0" title="leaf" />
-                <a-tree-node key="0-0-2-1" title="leaf" />
-              </a-tree-node>
-            </a-tree-node>
-          </a-tree>
-        </div>
-        <div style="float: left;width: 85%;">
-         <standard-table
-                 :columns="columns"
-                 :dataSource="dataSource"
-                 :selectedRows.sync="selectedRows"
-                 @clear="onClear"
-                 @change="onChange"
-                 @selectedRowChange="onSelectChange"
-         >
-           <div slot="icon" slot-scope="{text}">
-             <a-icon style="font-size: large" :type="text" />
-           </div>
-           <div slot="action" slot-scope="{text, record}">
-             <a style="margin-right: 8px">
-               <a-icon type="plus"/>新增
-             </a>
-             <a style="margin-right: 8px">
-               <a-icon type="edit"/>编辑
-             </a>
-             <a @click="deleteRecord(record.key)">
-               <a-icon type="delete" />删除1
-             </a>
-             <a @click="deleteRecord(record.key)" v-auth="`delete`">
-               <a-icon type="delete" />删除2
-             </a>
-             <router-link :to="`/list/query/detail/${record.key}`" >详情</router-link>
-           </div>
-           <template slot="statusTitle">
-             <a-icon @click.native="onStatusTitleClick" type="info-circle" />
-           </template>
-         </standard-table>
-        </div>
+<!--        <div  style="float: left;width: 12%;margin-right: 10px" >-->
+<!--          <a-tree show-line :default-expanded-keys="['0-0-0']" @select="onSelect">-->
+<!--            <a-icon slot="switcherIcon" type="down" />-->
+<!--            <a-tree-node key="0-0" title="parent 1">-->
+<!--              <a-tree-node key="0-0-0" title="parent 1-0">-->
+<!--                <a-tree-node key="0-0-0-0" title="leaf" />-->
+<!--                <a-tree-node key="0-0-0-1" title="leaf" />-->
+<!--                <a-tree-node key="0-0-0-2" title="leaf" />-->
+<!--              </a-tree-node>-->
+<!--              <a-tree-node key="0-0-1" title="parent 1-1">-->
+<!--                <a-tree-node key="0-0-1-0" title="leaf" />-->
+<!--              </a-tree-node>-->
+<!--              <a-tree-node key="0-0-2" title="parent 1-2">-->
+<!--                <a-tree-node key="0-0-2-0" title="leaf" />-->
+<!--                <a-tree-node key="0-0-2-1" title="leaf" />-->
+<!--              </a-tree-node>-->
+<!--            </a-tree-node>-->
+<!--          </a-tree>-->
+<!--        </div>-->
+<!--        <div style="float: left;width: 85%;">-->
+<!--        -->
+<!--        </div>-->
+        <a-skeleton :loading="loading" active >
+        <standard-table
+                :columns="columns"
+                :dataSource="dataSource"
+                :selectedRows.sync="selectedRows"
+                @clear="onClear"
+                @change="onChange"
+                @selectedRowChange="onSelectChange"
+        >
+          <div slot="icon" slot-scope="{text}">
+            <a-icon style="font-size: large" :type="text" />
+          </div>
+          <div slot="action" slot-scope="{text, record}">
+            <a style="margin-right: 8px">
+              <a-icon type="plus" />新增
+            </a>
+            <a @click="editRecord(record)" style="margin-right: 8px">
+              <a-icon type="edit"/>编辑
+            </a>
+            <a @click="deleteRecord(record.key)" v-auth="`delete`">
+              <a-icon type="delete" />删除
+            </a>
+            <a @click="deleteRecord(record.key)">
+              <a-icon type="delete" />删除
+            </a>
+            <router-link :to="`/list/query/detail/${record.key}`" >详情</router-link>
+          </div>
+          <template slot="statusTitle">
+            <a-icon @click.native="onStatusTitleClick" type="info-circle" />
+          </template>
+        </standard-table>
+        </a-skeleton>
       </div>
     </div>
       <a-modal
@@ -145,7 +148,7 @@
               @cancel="() => closeModel()"
               @ok="() => onSubmit()"
       >
-      <add-menu ref="addMenu"></add-menu>
+      <add-menu v-if="modalVisible" ref="addMenu" :record="record"></add-menu>
     </a-modal>
   </a-card>
 </template>
@@ -154,6 +157,7 @@
 import StandardTable from '@/components/table/StandardTable'
 import AddMenu from '@/pages/system/menu/AddMenu'
 import {request, METHOD} from '@/utils/request'
+import {successful} from '@/utils/notificationUtil'
 
 const columns = [
   {
@@ -184,7 +188,6 @@ const columns = [
     scopedSlots: { customRender: 'action' }
   }
 ]
-
 export default {
   name: 'QueryList',
   components: {StandardTable,AddMenu},
@@ -196,6 +199,8 @@ export default {
       dataSource: [],
       selectedRows: [],
       modalVisible: false,
+      record: null,
+      loading: true
     }
   },
   authorize: {
@@ -203,12 +208,17 @@ export default {
   },
   created() {
     request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/treePage', METHOD.GET, {'current':1, 'size':10}).then(res => {
+      this.loading = false;
       if(res.data.data){
         this.dataSource = res.data.data['records'];
       }
-    })
+    }).catch(this.loading = false)
   },
   methods: {
+    editRecord(record) {
+      this.record = record;
+      this.modalVisible = true;
+    },
     deleteRecord(key) {
       this.dataSource = this.dataSource.filter(item => item.key !== key)
       this.selectedRows = this.selectedRows.filter(item => item.key !== key)
@@ -233,7 +243,8 @@ export default {
       this.$message.info('选中行改变了')
     },
     addNew () {
-     this.modalVisible = true;
+      this.record = null;
+      this.modalVisible = true;
     },
     handleMenuClick (e) {
       if (e.key === 'delete') {
@@ -245,12 +256,20 @@ export default {
     },
     onSubmit(){
       this.$refs.addMenu.onSubmit(param=>{
-        if(param){
+        if(param&&!param.id){
           request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/add', METHOD.POST, param).then(res => {
             const data = res.data;
             if(data&&data.success){
               this.modalVisible = false;
-              this.$message.success(`添加成功`);
+              successful('添加成功')
+            }
+          })
+        }else{
+          request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/edit', METHOD.PUT, param).then(res => {
+            const data = res.data;
+            if(data&&data.success){
+              this.modalVisible = false;
+              successful('编辑成功')
             }
           })
         }

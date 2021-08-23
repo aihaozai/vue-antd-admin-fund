@@ -77,7 +77,7 @@
 import CommonLayout from '@/layouts/CommonLayout'
 //import {getRoutesConfig} from '@/services/user'
 import {setAuthorization} from '@/utils/request'
-import {loadRoutes} from '@/utils/routerUtil'
+//import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 import axios from 'axios'
 export default {
@@ -132,41 +132,41 @@ export default {
         //   this.$router.push('/dashboard/workplace')
         //   this.$message.success('登录成功!', 3)
         // })
-        loadRoutes([
-          {
-            path: '/login',
-            name: '登录页',
-            component: () => import('@/pages/login')
-          },{
-            path: '/',
-            name: '首页',
-            component: () => import('@/layouts/tabs/TabsView'),
-            redirect: '/login',
-            children: [
-              {
-                path: 'system',
-                name: '系统管理',
-                meta: {
-                  icon: 'appstore'
-                },
-                component: () => import('@/layouts/PageView'),
-                children: [
-                  {
-                    path: 'user',
-                    name: '用户列表',
-                    component: () => import('@/pages/system/user/UserList'),
-                  },
-                  {
-                    path: 'menu',
-                    name: '菜单列表',
-                    component: () => import('@/pages/system/menu/MenuList'),
-                  },
-                ]
-              },
-            ]
-          },])
-        this.$router.push('/system/user')
-        //this.$router.push('/dashboard/workplace')
+        // loadRoutes([
+        //   {
+        //     path: '/login',
+        //     name: '登录页',
+        //     component: () => import('@/pages/login')
+        //   },{
+        //     path: '/',
+        //     name: '首页',
+        //     component: () => import('@/layouts/tabs/TabsView'),
+        //     redirect: '/login',
+        //     children: [
+        //       {
+        //         path: 'system',
+        //         name: '系统管理',
+        //         meta: {
+        //           icon: 'appstore'
+        //         },
+        //         component: () => import('@/layouts/PageView'),
+        //         children: [
+        //           {
+        //             path: 'user',
+        //             name: '用户列表',
+        //             component: () => import('@/pages/system/user/UserList'),
+        //           },
+        //           {
+        //             path: 'menu',
+        //             name: '菜单列表',
+        //             component: () => import('@/pages/system/menu/MenuList'),
+        //           },
+        //         ]
+        //       },
+        //     ]
+        //   },])
+        //this.$router.push('/system/user')
+        this.$router.push('/dashboard/workplace')
         this.$message.success('登录成功!', 3)
       } else {
         this.error = loginRes.message

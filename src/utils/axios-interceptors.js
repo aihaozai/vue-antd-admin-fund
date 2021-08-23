@@ -52,6 +52,17 @@ const resp403 = {
   }
 }
 
+const resp500 = {
+  onRejected(error, options) {
+    const {router} = options
+    const {response} = error
+    if (response.status === 500) {
+      router.push('/500')
+    }
+    return Promise.reject(error)
+  }
+}
+
 const reqCommon = {
   /**
    * 发送请求之前做些什么
@@ -82,5 +93,5 @@ const reqCommon = {
 
 export default {
   request: [reqCommon], // 请求拦截
-  response: [resp401, resp403] // 响应拦截
+  response: [resp401, resp403, resp500] // 响应拦截
 }
