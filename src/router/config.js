@@ -316,6 +316,14 @@ const options = {
               },
               component: () => import('@/pages/system/menu/MenuList'),
             },
+            {
+              path: 'role',
+              name: '角色列表',
+              meta: {
+                icon: 'team'
+              },
+              component: () => import('@/pages/system/role/RoleList'),
+            },
           ]
         },
       ]
