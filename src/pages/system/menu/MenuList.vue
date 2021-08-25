@@ -6,71 +6,18 @@
           <a-row >
             <a-col :md="8" :sm="24" >
               <a-form-item
-                label="规则编号"
+                 :label="$t('name')"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}"
               >
-                <a-input placeholder="请输入" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24" >
-              <a-form-item
-                label="使用状态"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}"
-              >
-                <a-select placeholder="请选择">
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24" >
-              <a-form-item
-                label="调用次数"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}"
-              >
-                <a-input-number style="width: 100%" placeholder="请输入" />
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row v-if="advanced">
-            <a-col :md="8" :sm="24" >
-              <a-form-item
-                label="更新日期"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}"
-              >
-                <a-date-picker style="width: 100%" placeholder="请输入更新日期" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24" >
-              <a-form-item
-                label="使用状态"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}"
-              >
-                <a-select placeholder="请选择">
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24" >
-              <a-form-item
-                label="描述"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}"
-              >
-                <a-input placeholder="请输入" />
+                <a-input placeholder="请输入"  v-model="query['nameLIke']"  />
               </a-form-item>
             </a-col>
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary">查询</a-button>
-          <a-button style="margin-left: 8px">重置</a-button>
+          <a-button type="primary" @click="page()">查询</a-button>
+          <a-button style="margin-left: 8px" @click="reset()">重置</a-button>
           <a @click="toggleAdvanced" style="margin-left: 8px">
             {{advanced ? '收起' : '展开'}}
             <a-icon :type="advanced ? 'up' : 'down'" />
@@ -84,28 +31,6 @@
         <a-button @click="addNew" type="danger">删除</a-button>
       </a-space>
       <div>
-<!--        <div  style="float: left;width: 12%;margin-right: 10px" >-->
-<!--          <a-tree show-line :default-expanded-keys="['0-0-0']" @select="onSelect">-->
-<!--            <a-icon slot="switcherIcon" type="down" />-->
-<!--            <a-tree-node key="0-0" title="parent 1">-->
-<!--              <a-tree-node key="0-0-0" title="parent 1-0">-->
-<!--                <a-tree-node key="0-0-0-0" title="leaf" />-->
-<!--                <a-tree-node key="0-0-0-1" title="leaf" />-->
-<!--                <a-tree-node key="0-0-0-2" title="leaf" />-->
-<!--              </a-tree-node>-->
-<!--              <a-tree-node key="0-0-1" title="parent 1-1">-->
-<!--                <a-tree-node key="0-0-1-0" title="leaf" />-->
-<!--              </a-tree-node>-->
-<!--              <a-tree-node key="0-0-2" title="parent 1-2">-->
-<!--                <a-tree-node key="0-0-2-0" title="leaf" />-->
-<!--                <a-tree-node key="0-0-2-1" title="leaf" />-->
-<!--              </a-tree-node>-->
-<!--            </a-tree-node>-->
-<!--          </a-tree>-->
-<!--        </div>-->
-<!--        <div style="float: left;width: 85%;">-->
-<!--        -->
-<!--        </div>-->
         <a-skeleton :loading="loading" active >
         <standard-table
                 :columns="columns"
@@ -128,9 +53,14 @@
             <a @click="deleteRecord(record.key)" v-auth="`delete`">
               <a-icon type="delete" />删除
             </a>
-            <a @click="deleteRecord(record.key)">
-              <a-icon type="delete" />删除
-            </a>
+            <a-popconfirm placement="topRight" ok-text="Yes" cancel-text="No" @confirm="deleteRecord(record.key)" >
+              <template slot="title">
+                <p>{{ $t('deleteMenu') }}</p>
+              </template>
+              <a >
+                <a-icon type="delete" />删除
+              </a>
+            </a-popconfirm>
             <router-link :to="`/list/query/detail/${record.key}`" >详情</router-link>
           </div>
           <template slot="statusTitle">
@@ -147,6 +77,7 @@
               :maskClosable="false"
               @cancel="() => closeModel()"
               @ok="() => onSubmit()"
+              :confirm-loading="confirmLoading"
       >
       <add-menu v-if="modalVisible" ref="addMenu" :record="record"></add-menu>
     </a-modal>
@@ -200,28 +131,43 @@ export default {
       selectedRows: [],
       modalVisible: false,
       record: null,
-      loading: true
+      loading: true,
+      confirmLoading: false,
+      query: {},
     }
   },
   authorize: {
-    deleteRecord: 'delete'
+   // deleteRecord: 'delete'
   },
   created() {
-    request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/treePage', METHOD.GET, {'current':1, 'size':10}).then(res => {
-      this.loading = false;
-      if(res.data.data){
-        this.dataSource = res.data.data['records'];
-      }
-    }).catch(this.loading = false)
+   this.page();
   },
   methods: {
+    page() {
+      let param = {'current':1, 'size':10};
+      Object.assign(param, this.query)
+      request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/treePage', METHOD.GET, param).then(res => {
+        this.loading = false;
+        if(res.data.data){
+          this.dataSource = res.data.data['records'];
+        }
+      }).catch(this.loading = false)
+    },
+    reset(){
+      this.query = {};
+      this.page();
+    },
     editRecord(record) {
       this.record = record;
       this.modalVisible = true;
     },
     deleteRecord(key) {
-      this.dataSource = this.dataSource.filter(item => item.key !== key)
-      this.selectedRows = this.selectedRows.filter(item => item.key !== key)
+      request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/delete/'+key, METHOD.DELETE).then(res => {
+        const data = res.data;
+        if(data&&data.success){
+          successful('删除成功')
+        }
+      })
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
@@ -246,21 +192,18 @@ export default {
       this.record = null;
       this.modalVisible = true;
     },
-    handleMenuClick (e) {
-      if (e.key === 'delete') {
-        this.remove()
-      }
-    },
     onSelect(selectedKeys, info) {
       console.log('selected', selectedKeys, info);
     },
     onSubmit(){
+      this.confirmLoading = true;
       this.$refs.addMenu.onSubmit(param=>{
         if(param&&!param.id){
           request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/add', METHOD.POST, param).then(res => {
             const data = res.data;
             if(data&&data.success){
-              this.modalVisible = false;
+              this.confirmLoading = this.modalVisible = false;
+              this.confirmLoading = true;
               successful('添加成功')
             }
           })
@@ -268,7 +211,7 @@ export default {
           request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/edit', METHOD.PUT, param).then(res => {
             const data = res.data;
             if(data&&data.success){
-              this.modalVisible = false;
+              this.confirmLoading = this.modalVisible = false;
               successful('编辑成功')
             }
           })

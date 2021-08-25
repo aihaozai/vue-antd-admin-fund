@@ -14,6 +14,7 @@ module.exports = {
       icon: '菜单图标',
       component: '菜单部件',
       sort: '排序',
+      deleteMenu: '您确定要删除此菜单吗？'
     },
     HK: {
       addMenu: '新增菜單',
@@ -29,6 +30,7 @@ module.exports = {
       icon: '菜單圖標',
       component: '菜單部件',
       sort: '排序',
+      deleteMenu: '您確定要刪除此菜單嗎？'
     },
     US: {
       addMenu: 'Add Menu',
@@ -44,6 +46,7 @@ module.exports = {
       icon: 'Menu Icon',
       component: 'Component',
       sort: 'Sort',
+      deleteMenu: 'Are you sure to delete this menu?'
     },
   }
 }
