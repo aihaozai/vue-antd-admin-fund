@@ -29,7 +29,7 @@ module.exports = {
   },
   footerLinks: [                        //页面底部链接，{link: '链接地址', name: '名称/显示文字', icon: '图标，支持 ant design vue 图标库'}
     {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号-1'},
-    {link: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44078102440951', name: '粤公网安备 44078102440951号', img:'beian'}
+    {link: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44078102440951', name: '粤公网安备 44078102440951号', img:'beian'},
     {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号-2'},
   ],
   layoutFooter: false                   //页面底部是否显示
