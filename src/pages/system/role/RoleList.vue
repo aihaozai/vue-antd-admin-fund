@@ -1,57 +1,103 @@
 <template>
   <div class="card-list">
-    <a-list
-      :grid="{gutter: 24, lg: 3, md: 2, sm: 1, xs: 1}"
-      :dataSource="dataSource"
-    >
-      <a-list-item slot="renderItem" slot-scope="item">
-        <template v-if="item.add">
-          <a-button class="new-btn" type="dashed">
-            <a-icon type="plus" />新增产品
-          </a-button>
-        </template>
-        <template v-else>
-          <a-card :hoverable="true">
-            <a-card-meta >
-              <div style="margin-bottom: 3px" slot="title">{{item.title}}</div>
-              <a-avatar class="card-avatar" slot="avatar" :src="item.avatar" size="large" />
-              <div class="meta-content" slot="description">{{item.content}}</div>
-            </a-card-meta>
-            <a slot="actions">操作一</a>
-            <a slot="actions">操作一</a>
-          </a-card>
-        </template>
-      </a-list-item>
-    </a-list>
+    <a-skeleton :loading="loading" active >
+      <a-list
+        :grid="{gutter: 24, lg: 3, md: 2, sm: 1, xs: 1}"
+        :dataSource="dataSource"
+      >
+        <a-list-item slot="renderItem" slot-scope="item">
+          <template v-if="item.add">
+            <a-button class="new-btn" type="dashed" @click="add" v-if="hidden">
+              <a-icon type="plus" />新增角色
+            </a-button>
+            <a-card :hoverable="true" v-if="!hidden">
+              <a-form
+                      :form="form"
+                      @submit="handleSubmit"
+              >
+                <a-form-item>
+                  <a-input
+                          v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]"
+                          placeholder="Username"
+                  >
+                    <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
+                  </a-input>
+                </a-form-item>
+                <a-form-item>
+                  <a-input
+                          v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]"
+                          type="password"
+                          placeholder="Password"
+                  >
+                    <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
+                  </a-input>
+                </a-form-item>
+              </a-form>
+              <a slot="actions"  @click="handleSubmit">新增</a>
+              <a slot="actions" @click="hidden = true">取消</a>
+            </a-card>
+          </template>
+          <template v-else>
+            <a-card :hoverable="true">
+              <a-card-meta style="margin: 15px 0px">
+                <div style="margin-bottom: 3px" slot="title">{{item.name}}</div>
+                <a-avatar class="card-avatar" slot="avatar" src="https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png" size="large" />
+                <div class="meta-content" slot="description">{{item.content}}</div>
+              </a-card-meta>
+              <a slot="actions">操作一</a>
+              <a slot="actions">操作一</a>
+            </a-card>
+          </template>
+        </a-list-item>
+      </a-list>
+    </a-skeleton>
   </div>
 </template>
 
 <script>
-const dataSource = []
-dataSource.push({
-  add: true
-})
-for (let i = 0; i < 19; i++) {
-  dataSource.push({
-    title: 'Alipay',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-    content: '在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面和组件，这些类似的组件会被抽离成一套标准规范。'
-  })
-}
-
+import {request, METHOD} from '@/utils/request'
 export default {
   name: 'CardList',
   data () {
     return {
-      desc: '段落示意：蚂蚁金服务设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态， 提供跨越设计与开发的体验解决方案。',
-      linkList: [
-        {icon: 'rocket', href: '/#/', title: '快速开始'},
-        {icon: 'info-circle-o', href: '/#/', title: '产品简介'},
-        {icon: 'file-text', href: '/#/', title: '产品文档'}
-      ],
-      extraImage: 'https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png',
-      dataSource
+      dataSource: [],
+      loading: false,
+      query: {},
+      hidden: true
     }
+  },
+  created() {
+    this.page();
+  },
+  methods: {
+    page() {
+      this.loading = true;
+      let param = {'current':0, 'size':999};
+      Object.assign(param, this.query)
+      this.dataSource = [];
+      this.dataSource.push({add: true});
+
+      request( process.env.VUE_APP_API_BASE_URL_AUTH + '/role/page', METHOD.GET, param).then(res => {
+        const data = res.data;
+        if(data&&data.success){
+          this.dataSource = this.dataSource.concat(data.data['records']);
+          this.loading = false;
+        }
+      }).catch(this.loading = false)
+    },
+    add() {
+      this.form = this.$form.createForm(this, { name: 'normal_login' });
+      this.hidden = false;
+    },
+
+    handleSubmit(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.log('Received values of form: ', values);
+        }
+      });
+    },
   }
 }
 </script>
@@ -65,7 +111,7 @@ export default {
   .new-btn{
     border-radius: 2px;
     width: 100%;
-    height: 187px;
+    height: 226px;
   }
   .meta-content{
     position: relative;
