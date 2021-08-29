@@ -17,36 +17,56 @@
               >
                 <a-form-item>
                   <a-input
-                          v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]"
-                          placeholder="Username"
+                          v-decorator="['name',{ rules: [{ required: true, message: $t('input')+$t('name') }, { max: 32, message: $t('lengthMsg32'), trigger: 'blur' }] }]"
+                          :placeholder="$t('name')"
                   >
-                    <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
                   </a-input>
                 </a-form-item>
                 <a-form-item>
                   <a-input
-                          v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]"
-                          type="password"
-                          placeholder="Password"
+                          v-decorator="['code',{ rules: [{ required: true, message: $t('input')+$t('code') },{ max: 15, message: $t('lengthMsg15'), trigger: 'blur' }] }]"
+                          :placeholder="$t('code')"
                   >
-                    <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
                   </a-input>
                 </a-form-item>
               </a-form>
-              <a slot="actions"  @click="handleSubmit">新增</a>
               <a slot="actions" @click="hidden = true">取消</a>
+              <a slot="actions" @click="handleSubmit">新增</a>
             </a-card>
           </template>
           <template v-else>
-            <a-card :hoverable="true">
+            <a-card :hoverable="true" v-if="!item.edit">
               <a-card-meta style="margin: 15px 0px">
                 <div style="margin-bottom: 3px" slot="title">{{item.name}}</div>
-                <a-avatar class="card-avatar" slot="avatar" src="https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png" size="large" />
-                <div class="meta-content" slot="description">{{item.content}}</div>
+                <a-avatar class="card-avatar" slot="avatar" src="" type="user" size="large" />
+                <div class="meta-content" slot="description">{{item.code}}</div>
               </a-card-meta>
-              <a slot="actions">操作一</a>
-              <a slot="actions">操作一</a>
+              <a slot="actions" @click="edit(item)" >编辑</a>
             </a-card>
+            <div v-if="item.edit">
+              <a-card :hoverable="true">
+                <a-form
+                        :form="editForm"
+                >
+                  <a-form-item>
+                    <a-input
+                            v-decorator="['name',{ rules: [{ required: true, message: $t('input')+$t('name') }, { max: 32, message: $t('lengthMsg32'), trigger: 'blur' }] }]"
+                            :placeholder="$t('name')"
+                    >
+                    </a-input>
+                  </a-form-item>
+                  <a-form-item>
+                    <a-input
+                            v-decorator="['code',{ rules: [{ required: true, message: $t('input')+$t('code') },{ max: 15, message: $t('lengthMsg15'), trigger: 'blur' }] }]"
+                            :placeholder="$t('code')"
+                    >
+                    </a-input>
+                  </a-form-item>
+                </a-form>
+                <a slot="actions" @click="closeEdit(item)">取消</a>
+                <a slot="actions" @click="handleUpdate(item)">保存</a>
+              </a-card>
+            </div>
           </template>
         </a-list-item>
       </a-list>
@@ -56,14 +76,18 @@
 
 <script>
 import {request, METHOD} from '@/utils/request'
+import {info} from '@/utils/notificationUtil'
+
 export default {
-  name: 'CardList',
+  name: 'RoleList',
+  i18n: require('./i18n'),
   data () {
     return {
       dataSource: [],
       loading: false,
       query: {},
-      hidden: true
+      hidden: true,
+      editForm: null
     }
   },
   created() {
@@ -86,15 +110,54 @@ export default {
       }).catch(this.loading = false)
     },
     add() {
-      this.form = this.$form.createForm(this, { name: 'normal_login' });
+      this.form = this.$form.createForm(this, { name: 'add' });
       this.hidden = false;
     },
+    edit(item) {
+      if(this.editForm!=null){
+        info('请更新当前角色')
+        return;
+      }
+      this.editForm = this.$form.createForm(this, { name: 'edit' });
 
+      item.edit=true;
+      this.$forceUpdate();
+      this.$nextTick(()=>{
+        this.editForm.setFieldsValue({
+          name: item.name,
+          code: item.code,
+        });
+      })
+    },
+    closeEdit(item) {
+      item.edit=false;
+      this.editForm = null;
+      this.$forceUpdate();
+    },
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          request( process.env.VUE_APP_API_BASE_URL_AUTH + '/role/add', METHOD.POST, values).then(res => {
+            const data = res.data;
+            if(data&&data.success){
+            this.page();
+            }
+          }).catch(this.hidden = !this.hidden)
+        }
+      });
+    },
+    handleUpdate(item) {
+      this.editForm.validateFields((err, values) => {
+        if (!err) {
+          values.id = item.id;
+          request( process.env.VUE_APP_API_BASE_URL_AUTH + '/role/edit', METHOD.PUT, values).then(res => {
+            const data = res.data;
+            if(data&&data.success){
+              this.closeEdit(item);
+              this.page();
+            }
+          })
         }
       });
     },

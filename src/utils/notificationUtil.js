@@ -14,8 +14,16 @@ function info (msg, desc, time) {
     duration: time || 2
   });
 }
+function errorInfo (msg, desc, time) {
+  notification['error']({
+    message: msg,
+    description:desc || '',
+    duration: time || 3
+  });
+}
 
 export  {
   successful,
-  info
+  info,
+  errorInfo
 }

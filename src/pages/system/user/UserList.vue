@@ -9,7 +9,7 @@
         <a-input placeholder="用户名" v-model="query['usernameLike']" style="margin-left: 10px; width: 272px;" />
         <a-button type="primary" icon="search" style="margin-left: 10px; width: 40px;" @click="page()" :loading="loading"></a-button>
       </div>
-      <a-list size="large" :pagination="pagination" :data-source="list" :bordered="false" :loading="loading" >
+      <a-list size="large" :pagination="true" :data-source="list" :bordered="false" :loading="loading" >
         <a-list-item  slot="renderItem" key="item.id" slot-scope="item">
           <a-list-item-meta
             description="账号"

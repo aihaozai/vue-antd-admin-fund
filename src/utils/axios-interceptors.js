@@ -1,4 +1,6 @@
 import Cookie from 'js-cookie'
+import {errorInfo} from '@/utils/notificationUtil'
+
 // 401拦截
 const resp401 = {
   /**
@@ -53,11 +55,20 @@ const resp403 = {
 }
 
 const resp500 = {
-  onRejected(error, options) {
-    const {router} = options
+  onRejected(error) {
     const {response} = error
     if (response.status === 500) {
-      router.push('/500')
+      errorInfo(response.data.error||response.data.message||'服务器出错',response.data.data)
+    }
+    return Promise.reject(error)
+  }
+}
+
+const resp503 = {
+  onRejected(error) {
+    const {response} = error
+    if (response.status === 503) {
+      errorInfo('连接服务器失败',response.data.error)
     }
     return Promise.reject(error)
   }
@@ -93,5 +104,5 @@ const reqCommon = {
 
 export default {
   request: [reqCommon], // 请求拦截
-  response: [resp401, resp403, resp500] // 响应拦截
+  response: [resp401, resp403, resp500, resp503] // 响应拦截
 }

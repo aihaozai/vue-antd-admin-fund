@@ -27,7 +27,7 @@
     </div>
     <div>
       <a-space class="operator">
-        <a-button @click="addNew" type="primary">新建</a-button>
+        <a-button @click="addNew" type="primary">新增</a-button>
         <a-button @click="addNew" type="danger">删除</a-button>
       </a-space>
       <div>
@@ -44,8 +44,8 @@
             <a-icon style="font-size: large" :type="text" />
           </div>
           <div slot="action" slot-scope="{text, record}">
-            <a style="margin-right: 8px">
-              <a-icon type="plus" />新增
+            <a  @click="showAuthority(record.key)" style="margin-right: 8px">
+              <a-icon type="api" />操作权限
             </a>
             <a @click="editRecord(record)" style="margin-right: 8px">
               <a-icon type="edit"/>编辑
@@ -61,7 +61,6 @@
                 <a-icon type="delete" />删除
               </a>
             </a-popconfirm>
-            <router-link :to="`/list/query/detail/${record.key}`" >详情</router-link>
           </div>
           <template slot="statusTitle">
             <a-icon @click.native="onStatusTitleClick" type="info-circle" />
@@ -81,12 +80,26 @@
       >
       <add-menu v-if="modalVisible" ref="addMenu" :record="record"></add-menu>
     </a-modal>
+    <div  class="beauty-scroll">
+      <a-drawer
+              :title="$t('operationAuthority')"
+              placement="right"
+              :closable="false"
+              :width="360"
+              :visible="authorityVisible"
+              @close="authorityVisible = false"
+
+      >
+        <menu-authority v-if="authorityVisible" ref="menuAuthority" :menuId="menuId"></menu-authority>
+      </a-drawer>
+    </div>
   </a-card>
 </template>
 
 <script>
 import StandardTable from '@/components/table/StandardTable'
 import AddMenu from '@/pages/system/menu/AddMenu'
+import MenuAuthority from '@/pages/system/menu/MenuAuthority'
 import {request, METHOD} from '@/utils/request'
 import {successful} from '@/utils/notificationUtil'
 
@@ -121,7 +134,7 @@ const columns = [
 ]
 export default {
   name: 'QueryList',
-  components: {StandardTable,AddMenu},
+  components: {StandardTable, AddMenu, MenuAuthority},
   i18n: require('./i18n'),
   data () {
     return {
@@ -134,6 +147,8 @@ export default {
       loading: true,
       confirmLoading: false,
       query: {},
+      authorityVisible: false,
+      menuId: null
     }
   },
   authorize: {
@@ -166,6 +181,7 @@ export default {
         const data = res.data;
         if(data&&data.success){
           successful('删除成功')
+          this.page();
         }
       })
     },
@@ -221,7 +237,13 @@ export default {
     closeModel(){
       this.$refs.addMenu.resetForm();
       this.modalVisible = false;
-    }
+    },
+    showAuthority(key){
+      this.menuId = key;
+      this.authorityVisible = true;
+      this.authorityData = [];
+      this.authorityData.push({add: true});
+    },
   }
 }
 </script>
