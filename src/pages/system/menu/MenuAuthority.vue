@@ -79,12 +79,12 @@ export default {
   name: 'AddMenu',
   components: {},
   i18n: require('./i18n'),
-    props: {
-        menuId: {
-            type: String,
-            default: null
-        },
-    },
+  props: {
+      menuId: {
+          type: String,
+          default: null
+      },
+   },
   data() {
       return {
           loading: false,

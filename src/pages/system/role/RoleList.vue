@@ -42,6 +42,7 @@
                 <div class="meta-content" slot="description">{{item.code}}</div>
               </a-card-meta>
               <a slot="actions" @click="edit(item)" >编辑</a>
+              <a slot="actions" @click="showAuthority()" >授权</a>
             </a-card>
             <div v-if="item.edit">
               <a-card :hoverable="true">
@@ -71,15 +72,34 @@
         </a-list-item>
       </a-list>
     </a-skeleton>
+
+    <a-drawer
+            :title="$t('operationAuthority')"
+            placement="right"
+            :closable="false"
+            :width="720"
+            :visible="authorityVisible"
+            @close="authorityVisible = false"
+    >
+      <authority-view :options="options"></authority-view>
+    </a-drawer>
   </div>
 </template>
 
 <script>
 import {request, METHOD} from '@/utils/request'
 import {info} from '@/utils/notificationUtil'
+import AuthorityView from '@/pages/system/role/AuthorityView'
+// const options = [
+//   { label: 'Apple', value: 'Apple' ,key: '1' ,authority:  [{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Pear1', value: 'Pear1' ,key: '1'}],
+//     children: [{ label: 'Pear', value: 'Pear' ,key: '1', authority:  [{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Pear1', value: 'Pear1' ,key: '1'}],children: [{ label: 'Pear', value: 'Pear' ,key: '1', authority:  [{ label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'}]},
+//         { label: 'Orange', value: 'Orange', key: '1', authority:  [{ label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'}]}]},
+//       { label: 'Orange', value: 'Orange', key: '1', authority:  [{ label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'}]}]}
+// ];
 
 export default {
   name: 'RoleList',
+  components: {AuthorityView},
   i18n: require('./i18n'),
   data () {
     return {
@@ -87,7 +107,9 @@ export default {
       loading: false,
       query: {},
       hidden: true,
-      editForm: null
+      editForm: null,
+      authorityVisible: false,
+      options: [],
     }
   },
   created() {
@@ -161,29 +183,20 @@ export default {
         }
       });
     },
+    showAuthority() {
+      request( process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/authorityTree', METHOD.GET).then(res => {
+        const data = res.data;
+        if(data&&data.success){
+          this.options =data.data;
+          this.authorityVisible = true
+
+        }
+      })
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .card-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 48px;
-  }
-  .new-btn{
-    border-radius: 2px;
-    width: 100%;
-    height: 226px;
-  }
-  .meta-content{
-    position: relative;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    height: 64px;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  }
-
+  @import "index";
 </style>

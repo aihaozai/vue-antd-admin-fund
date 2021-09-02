@@ -80,7 +80,7 @@
       >
       <add-menu v-if="modalVisible" ref="addMenu" :record="record"></add-menu>
     </a-modal>
-    <div  class="beauty-scroll">
+    <div>
       <a-drawer
               :title="$t('operationAuthority')"
               placement="right"
