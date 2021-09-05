@@ -42,7 +42,7 @@
                 <div class="meta-content" slot="description">{{item.code}}</div>
               </a-card-meta>
               <a slot="actions" @click="edit(item)" >编辑</a>
-              <a slot="actions" @click="showAuthority()" >授权</a>
+              <a slot="actions" @click="showAuthority(item.id)" >授权</a>
             </a-card>
             <div v-if="item.edit">
               <a-card :hoverable="true">
@@ -81,7 +81,15 @@
             :visible="authorityVisible"
             @close="authorityVisible = false"
     >
-      <authority-view :options="options"></authority-view>
+      <authority-view :options="options" ref="authorityView"/>
+      <div class="drawer-footer">
+        <a-button style="margin-right: 8px" @click="authorityVisible = false">
+          取消
+        </a-button>
+        <a-button type="primary" @click="authorityConfirm">
+          确定
+        </a-button>
+      </div>
     </a-drawer>
   </div>
 </template>
@@ -90,12 +98,7 @@
 import {request, METHOD} from '@/utils/request'
 import {info} from '@/utils/notificationUtil'
 import AuthorityView from '@/pages/system/role/AuthorityView'
-// const options = [
-//   { label: 'Apple', value: 'Apple' ,key: '1' ,authority:  [{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Pear1', value: 'Pear1' ,key: '1'}],
-//     children: [{ label: 'Pear', value: 'Pear' ,key: '1', authority:  [{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Pear1', value: 'Pear1' ,key: '1'}],children: [{ label: 'Pear', value: 'Pear' ,key: '1', authority:  [{ label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'}]},
-//         { label: 'Orange', value: 'Orange', key: '1', authority:  [{ label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'}]}]},
-//       { label: 'Orange', value: 'Orange', key: '1', authority:  [{ label: 'Pear1', value: 'Pear1' ,key: '1'},{ label: 'Apple1', value: 'Apple1' ,key: '1' }, { label: 'Pear1', value: 'Pear1' ,key: '1'}]}]}
-// ];
+import {successful} from '@/utils/notificationUtil'
 
 export default {
   name: 'RoleList',
@@ -110,6 +113,7 @@ export default {
       editForm: null,
       authorityVisible: false,
       options: [],
+      roleId: null,
     }
   },
   created() {
@@ -183,13 +187,25 @@ export default {
         }
       });
     },
-    showAuthority() {
+    showAuthority(id) {
+      this.roleId = id;
       request( process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/authorityTree', METHOD.GET).then(res => {
         const data = res.data;
         if(data&&data.success){
           this.options =data.data;
           this.authorityVisible = true
 
+        }
+      })
+    },
+    authorityConfirm() {
+      let param = this.$refs.authorityView.getData();
+      param.roleId = this.roleId
+      request( process.env.VUE_APP_API_BASE_URL_AUTH + '/authorize/add', METHOD.POST,param).then(res => {
+        const data = res.data;
+        if(data&&data.success){
+          this.authorityVisible = false
+          successful('授权成功')
         }
       })
     }

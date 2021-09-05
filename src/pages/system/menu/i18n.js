@@ -24,7 +24,7 @@ module.exports = {
       cancel: '取消',
       add: '新增',
       edit: '编辑',
-      del: '取消',
+      del: '删除',
       operationAuthority: '操作权限',
     },
     HK: {
@@ -51,7 +51,7 @@ module.exports = {
       cancel: '取消',
       add: '新增',
       edit: '編輯',
-      del: '取消',
+      del: '删除',
       operationAuthority: '操作權限',
     },
     US: {

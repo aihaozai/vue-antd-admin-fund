@@ -41,7 +41,7 @@
                       <div class="meta-content" slot="description">{{item.code}}</div>
                     </a-card-meta>
                     <a slot="actions" @click="edit(item)" >{{$t('edit')}}</a>
-                    <a slot="actions" @click="del(item.id)" >{{$t('delete')}}</a>
+                    <a slot="actions" @click="del(item.id)" >{{$t('del')}}</a>
                 </a-card>
                 <div v-if="!editHidden&&item.edit">
                     <a-card :hoverable="true" >
@@ -76,7 +76,7 @@
 import {request, METHOD} from '@/utils/request'
 import {successful} from '@/utils/notificationUtil'
 export default {
-  name: 'AddMenu',
+  name: 'MenuAuthority',
   components: {},
   i18n: require('./i18n'),
   props: {
