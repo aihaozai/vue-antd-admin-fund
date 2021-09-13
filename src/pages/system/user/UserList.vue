@@ -40,17 +40,39 @@
                 {{ item['credentialsNonExpired']?'正常':'过期' }}
               </a-tag></p>
             </div>
+            <div class="list-content-item">
+              <span>操作</span>
+              <p><a  @click="showAuthority(item.id)" style="margin-right: 8px">
+                角色权限
+              </a></p>
+            </div>
           </div>
         </a-list-item>
       </a-list>
     </a-card>
+
+    <a-drawer
+            :title="$t('rolePermission')"
+            placement="right"
+            :closable="false"
+            :width="360"
+            :visible="authorityVisible"
+            @close="authorityVisible = false"
+
+    >
+      <role-authority v-if="authorityVisible" ref="roleAuthority" :userId="userId"></role-authority>
+    </a-drawer>
   </div>
 </template>
 
 <script>
 import {request, METHOD} from '@/utils/request'
+import RoleAuthority from '@/pages/system/user/RoleAuthority'
+
 export default {
   name: 'UserList',
+  components: {RoleAuthority},
+  i18n: require('./i18n'),
   data() {
     return {
       list: [],
@@ -66,7 +88,9 @@ export default {
         current: 1,
       },
       loading: true,
-      query: {}
+      query: {},
+      authorityVisible: false,
+      userId: null,
     }
   },
   created() {
@@ -86,7 +110,11 @@ export default {
           this.loading = false;
         }
       }).catch(this.loading = false)
-    }
+    },
+    showAuthority(key){
+      this.userId = key;
+      this.authorityVisible = true;
+    },
   }
 }
 </script>

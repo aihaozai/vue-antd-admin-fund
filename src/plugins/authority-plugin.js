@@ -52,7 +52,7 @@ const auth = function(authConfig, permission, role, permissions, roles) {
  * @returns {boolean}
  */
 const checkFromPermission = function(check, permission) {
-  return permission && permission.operation && permission.operation.indexOf(check) !== -1
+  return permission && permission.authority && permission.authority.indexOf(check) !== -1
 }
 
 /**
@@ -66,8 +66,8 @@ const checkFromRoles = function(check, roles) {
     return false
   }
   for (let role of roles) {
-    const {operation} = role
-    if (operation && operation.indexOf(check) !== -1) {
+    const {authority} = role
+    if (authority && authority.indexOf(check) !== -1) {
       return true
     }
   }

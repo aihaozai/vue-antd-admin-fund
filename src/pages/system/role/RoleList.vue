@@ -74,15 +74,15 @@
     </a-skeleton>
 
     <a-drawer
-            :title="$t('operationAuthority')"
+            :title="$t('permission')"
             placement="right"
             :closable="false"
             :width="720"
             :visible="authorityVisible"
             @close="authorityVisible = false"
     >
-      <authority-view :options="options" ref="authorityView"/>
-      <div class="drawer-footer">
+      <authority-view v-if="authorityVisible" :options="options" :authorize="authorize" ref="authorityView"/>
+      <div class="drawer-footer" v-if="authorityVisible">
         <a-button style="margin-right: 8px" @click="authorityVisible = false">
           取消
         </a-button>
@@ -114,6 +114,7 @@ export default {
       authorityVisible: false,
       options: [],
       roleId: null,
+      authorize: null
     }
   },
   created() {
@@ -189,12 +190,19 @@ export default {
     },
     showAuthority(id) {
       this.roleId = id;
+      let param = {'roleId': id};
       request( process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/authorityTree', METHOD.GET).then(res => {
         const data = res.data;
         if(data&&data.success){
           this.options =data.data;
-          this.authorityVisible = true
+          request( process.env.VUE_APP_API_BASE_URL_AUTH + '/authorize/roleList', METHOD.GET,param).then(r => {
+            const d = r.data;
+            if(d&&d.success){
+              this.authorize =d.data;
+              this.authorityVisible = true
 
+            }
+          })
         }
       })
     },

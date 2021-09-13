@@ -74,12 +74,14 @@
 </template>
 
 <script>
+import {request, METHOD} from '@/utils/request'
 import CommonLayout from '@/layouts/CommonLayout'
 //import {getRoutesConfig} from '@/services/user'
 import {setAuthorization} from '@/utils/request'
-//import {loadRoutes} from '@/utils/routerUtil'
+import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 import axios from 'axios'
+
 export default {
   name: 'Login',
   components: {CommonLayout},
@@ -106,10 +108,10 @@ export default {
           const password = this.form.getFieldValue('password')
           axios({
             method: 'POST',
-            url: process.env.VUE_APP_API_BASE_URL_AUTH+'/oauth/token?grant_type=password&username='+name+'&password='+password,
-            auth: {'username': 'auth_simple','password': 'haozai'}
+            url: process.env.VUE_APP_API_BASE_URL_AUTH + '/oauth/token?grant_type=password&username=' + name + '&password=' + password,
+            auth: {'username': 'auth_simple', 'password': 'haozai'}
           }).then(res => this.afterLogin(res))
-            .catch(this.logging = false)
+          .catch(this.logging = false )
         }
       })
     },
@@ -118,11 +120,31 @@ export default {
       console.log(res)
       const loginRes = res.data.data
       if (res.status >= 0) {
-         const {user} = loginRes
-         this.setUser(user)
-        // const {user, permissions, roles} = loginRes
+        request( process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/findMenuByCurrentUser', METHOD.GET).then(result => {
+          const data = result.data;
+          if(data&&data.success){
+            loadRoutes([
+              {
+                path: '/login',
+                name: '登录页',
+                component: () => import('@/pages/login')
+              },{
+                path: '/',
+                name: '首页',
+                component: () => import('@/layouts/tabs/TabsView'),
+                redirect: '/login',
+                children: data.data
+              },])
+          }
+          this.$router.push('/dashboard/workplace')
+        })
+        const {user} = loginRes
+        this.setUser(user)
+        //this.setPermissions(user.authorities)
+        //this.$store.commit('account/setPermissions', authorities)
+        //const {user, permissions, roles} = loginRes
         // this.setUser(user)
-        // this.setPermissions(permissions)
+         this.setPermissions( [{id: 'queryForm', authority: ['menu:edit', 'edit']}])
         // this.setRoles(roles)
         setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)})
         //获取路由配置
@@ -166,7 +188,7 @@ export default {
         //     ]
         //   },])
         //this.$router.push('/system/user')
-        this.$router.push('/dashboard/workplace')
+
         this.$message.success('登录成功!', 3)
       } else {
         this.error = loginRes.message

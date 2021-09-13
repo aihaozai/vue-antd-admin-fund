@@ -15,12 +15,12 @@ Mock.mock(`${process.env.VUE_APP_API_BASE_URL}/login`, 'post', ({body}) => {
 
   if (name === 'admin' && password === '888888') {
     success = true
-    result.data.permissions = [{id: 'queryForm', operation: ['add', 'edit']}]
-    result.data.roles = [{id: 'admin', operation: ['add', 'edit', 'delete']}]
+    result.data.permissions = [{id: 'queryForm', authority: ['add', 'edit']}]
+    result.data.roles = [{id: 'admin', authority: ['add', 'edit', 'delete']}]
   } else if (name === 'test' || password === '888888') {
     success = true
-    result.data.permissions = [{id: 'queryForm', operation: ['add', 'edit']}]
-    result.data.roles = [{id: 'test', operation: ['add', 'edit', 'delete']}]
+    result.data.permissions = [{id: 'queryForm', authority: ['add', 'edit']}]
+    result.data.roles = [{id: 'test', authority: ['add', 'edit', 'delete']}]
   } else {
     success = false
   }

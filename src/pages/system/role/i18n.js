@@ -6,6 +6,7 @@ module.exports = {
       lengthMsg15: '长度应为0到15',
       lengthMsg32: '长度应为0到32',
       input: '请输入',
+      permission: '权限',
     },
     HK: {
       name: '角色名稱',
@@ -13,6 +14,7 @@ module.exports = {
       lengthMsg15: '長度應為0到15',
       lengthMsg32: '長度應為0到32',
       input: '請輸入',
+      permission: '權限',
     },
     US: {
       name: 'role name',
@@ -20,6 +22,7 @@ module.exports = {
       lengthMsg15: 'Length should be 0 to 15',
       lengthMsg32: 'Length should be 0 to 32',
       input: 'Please input ',
+      permission: 'Permission',
     },
   }
 }

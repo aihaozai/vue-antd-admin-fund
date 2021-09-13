@@ -47,13 +47,10 @@
             <a  @click="showAuthority(record.key)" style="margin-right: 8px">
               <a-icon type="api" />操作权限
             </a>
-            <a @click="editRecord(record)" style="margin-right: 8px">
+            <a @click="editRecord(record)" style="margin-right: 8px" v-auth:permission="`menu:edit`">
               <a-icon type="edit"/>编辑
             </a>
-            <a @click="deleteRecord(record.key)" v-auth="`delete`">
-              <a-icon type="delete" />删除
-            </a>
-            <a-popconfirm placement="topRight" ok-text="Yes" cancel-text="No" @confirm="deleteRecord(record.key)" >
+            <a-popconfirm placement="topRight" ok-text="Yes" cancel-text="No"  @confirm="deleteRecord(record.key)" >
               <template slot="title">
                 <p>{{ $t('deleteMenu') }}</p>
               </template>
@@ -152,7 +149,7 @@ export default {
     }
   },
   authorize: {
-   // deleteRecord: 'delete'
+   // editRecord: 'delete'
   },
   created() {
    this.page();
@@ -241,8 +238,6 @@ export default {
     showAuthority(key){
       this.menuId = key;
       this.authorityVisible = true;
-      this.authorityData = [];
-      this.authorityData.push({add: true});
     },
   }
 }
