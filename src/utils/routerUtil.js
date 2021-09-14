@@ -42,6 +42,9 @@ function parseRoutes(routesConfig, routerMap) {
     if (!router) {
       console.warn(`can't find register for router ${routeCfg.router}, please register it in advance.`)
       router = typeof item === 'string' ? {path: item, name: item} : item
+      if(!router.component){
+        router.component = router.path === '/' ? routerMap['root'].component : routerMap[router.path].component;
+      }
     }
     // 从 router 和 routeCfg 解析路由
     const meta = {
