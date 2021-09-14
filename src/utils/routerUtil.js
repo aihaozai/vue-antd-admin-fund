@@ -267,4 +267,20 @@ function loadGuards(guards, options) {
   })
 }
 
-export {parseRoutes, loadRoutes, formatAuthority, getI18nKey, loadGuards, deepMergeRoutes, formatRoutes, setAppOptions}
+/**
+ * 加载路由
+ * @param menuData 菜单数据
+ */
+function formatMenuRoutes(menuData) {
+  let routes = [];
+  for (const obj of menuData) {
+    let route = { path: obj.path, name: obj.name, component: routerMap[obj.path].component }
+    if(obj.children){
+      route.children = formatMenuRoutes(obj.children)
+    }
+    routes.push(route)
+  }
+  return routes;
+}
+
+export {parseRoutes, loadRoutes, formatAuthority, getI18nKey, loadGuards, deepMergeRoutes, formatRoutes, setAppOptions, formatMenuRoutes}

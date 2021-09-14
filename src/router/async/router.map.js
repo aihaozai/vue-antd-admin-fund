@@ -149,16 +149,23 @@ const routerMap = {
     name: '颜色复选框',
     component: () => import('@/pages/components/Palette')
   },
+
+  //自定义注册路由
+  fund: {
+    component: view.page
+  },
+  system: {
+    component: view.page
+  },
   user: {
-    path: 'user',
-    name: '用户管理',
-    component: () => import('@/pages/system/user/UserList'),
+    component: () => import('@/pages/system/user/UserList')
   },
   menu: {
-    path: 'menu',
-    name: '菜单管理',
-    component: () => import('@/pages/system/menu/MenuList'),
+    component: () => import('@/pages/system/menu/MenuList')
   },
+  role: {
+    component: () => import('@/pages/system/role/RoleList')
+  }
 }
 export default routerMap
 
