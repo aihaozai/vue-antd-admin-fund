@@ -274,7 +274,7 @@ function loadGuards(guards, options) {
 function formatMenuRoutes(menuData) {
   let routes = [];
   for (const obj of menuData) {
-    let route = { path: obj.path, name: obj.name, component: routerMap[obj.path].component }
+    let route = { path: obj.path, name: obj.name, component: routerMap[obj.path].component,   meta: {icon: obj.icon, authority: {permission: obj.id }} }
     if(obj.children){
       route.children = formatMenuRoutes(obj.children)
     }

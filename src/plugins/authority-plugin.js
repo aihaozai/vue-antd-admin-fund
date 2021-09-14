@@ -4,7 +4,7 @@
  * @param route
  * @returns {Permission}
  */
-const getRoutePermission = (permissions, route) => permissions.find(item => item.id === route.meta.authority.permission)
+const getRoutePermission = (permissions, route) => permissions.filter(item => item.menuId === route.meta.authority.permission)
 /**
  * 获取路由需要的角色
  * @param roles
@@ -155,7 +155,7 @@ const AuthorityPlugin = {
         $auth(check, type) {
           const permissions = this.$store.getters['account/permissions']
           const roles = this.$store.getters['account/roles']
-          const permission = getRoutePermission(permissions, this.$route)
+          const permission = getRoutePermission(permissions, this.$route).find(item => item.authority === check )
           const role = getRouteRole(roles, this.$route)
           return auth.apply(this, [{check, type}, permission, role, permissions, roles])
         }

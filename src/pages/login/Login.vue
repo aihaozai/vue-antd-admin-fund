@@ -77,10 +77,11 @@
 import {request, METHOD} from '@/utils/request'
 import CommonLayout from '@/layouts/CommonLayout'
 //import {getRoutesConfig} from '@/services/user'
-import {setAuthorization} from '@/utils/request'
+import {setAuthorization, removeAuthorization} from '@/utils/request'
 import {loadRoutes, formatMenuRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 import axios from 'axios'
+import {AUTH_TYPE} from "../../utils/request";
 
 export default {
   name: 'Login',
@@ -91,6 +92,9 @@ export default {
       error: '',
       form: this.$form.createForm(this)
     }
+  },
+  created() {
+    removeAuthorization(AUTH_TYPE.BEARER);
   },
   computed: {
     systemName () {
@@ -111,7 +115,10 @@ export default {
             url: process.env.VUE_APP_API_BASE_URL_AUTH + '/oauth/token?grant_type=password&username=' + name + '&password=' + password,
             auth: {'username': 'auth_simple', 'password': 'haozai'}
           }).then(res => this.afterLogin(res))
-          .catch(this.logging = false )
+          .catch(e =>{
+            console.error(e);
+            this.logging = false;
+          } )
         }
       })
     },
@@ -119,35 +126,49 @@ export default {
       this.logging = false
       const loginRes = res.data.data
       if (res.status >= 0) {
+        const {user} = loginRes
+        this.setUser(user)
         //获取路由配置
         request( process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/findMenuByCurrentUser', METHOD.GET).then(result => {
           const data = result.data;
-          if(data&&data.success){
-            let route = [{
-              path: '/',
-              name: '首页',
-              component: () => import('@/layouts/tabs/TabsView'),
-              redirect: '/login',
-              children: formatMenuRoutes(data.data)
-            }]
-            loadRoutes(route)
+          if(data&&data.success) {
+            this.loadMenuRoute(data.data);
+            let concatPermission  = user['authorities'].concat(this.loadMenuPermissions(data.data));
+            this.setPermissions(concatPermission);
+            this.$router.push('/system/menu')
           }
-          this.$router.push('/system/menu')
         })
-        const {user} = loginRes
-        this.setUser(user)
-        //this.setPermissions(user.authorities)
-        //this.$store.commit('account/setPermissions', authorities)
+
         //const {user, permissions, roles} = loginRes
-        this.setPermissions( [{id: 'queryForm', authority: ['menu:edit', 'edit']}])
         // this.setRoles(roles)
-        setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)})
+        setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)},AUTH_TYPE.BEARER);
         this.$message.success('登录成功!', 3)
       } else {
         this.error = loginRes.message
       }
+    },
+    loadMenuRoute(data){
+      let route = [{
+        path: '/',
+        name: '首页',
+        component: () => import('@/layouts/tabs/TabsView'),
+        redirect: '/login',
+        children: formatMenuRoutes(data)
+      }];
+      loadRoutes(route)
+    },
+    loadMenuPermissions(data){
+      let permission = [];
+      for (const obj of data) {
+        let o = {id: obj.id};
+        if(obj.children){
+          permission = permission.concat(this.loadMenuPermissions(obj.children))
+        }
+        permission.push(o)
+      }
+      return permission;
     }
-  }
+  },
 }
 </script>
 
