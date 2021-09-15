@@ -107,7 +107,7 @@ export default {
           this.logging = true
           const name = this.form.getFieldValue('name')
           const password = this.form.getFieldValue('password');
-          this.removeSession();
+          removeSession();
           axios({
             method: 'POST',
             url: process.env.VUE_APP_API_BASE_URL_AUTH + '/oauth/token?grant_type=password&username=' + name + '&password=' + password,
@@ -128,7 +128,7 @@ export default {
         this.setUser(user);
 
         //获取角色
-        this.getRoles().then(result => {
+        getRoles().then(result => {
           const data = result.data;
           if(data&&data.success) {
             this.setRoles(this.loadRole(data.data))
@@ -136,7 +136,7 @@ export default {
         });
 
         //获取菜单
-        this.getMenus().then(result => {
+        getMenus().then(result => {
           const data = result.data;
           if(data&&data.success) {
             this.loadMenuRoute(data.data);

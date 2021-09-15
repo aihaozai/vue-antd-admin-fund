@@ -37,7 +37,7 @@ export default {
         const data = res.data;
         if(data&&data.success) {
           this.$message.success(data.data);
-          this.removeSession();
+          removeSession();
           this.$router.push('/login');
         }
       });
