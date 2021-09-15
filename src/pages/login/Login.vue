@@ -75,13 +75,11 @@
 
 <script>
 import CommonLayout from '@/layouts/CommonLayout'
-import {getRoles, getMenus} from '@/services/user'
-import {setAuthorization, removeAuthorization} from '@/utils/request'
+import {getRoles, getMenus, removeSession} from '@/services/user'
+import {setAuthorization, removeAuthorization, AUTH_TYPE} from '@/utils/request'
 import {loadRoutes, formatMenuRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 import axios from 'axios'
-import {AUTH_TYPE} from "../../utils/request";
-
 export default {
   name: 'Login',
   components: {CommonLayout},
@@ -108,7 +106,8 @@ export default {
         if (!err) {
           this.logging = true
           const name = this.form.getFieldValue('name')
-          const password = this.form.getFieldValue('password')
+          const password = this.form.getFieldValue('password');
+          this.removeSession();
           axios({
             method: 'POST',
             url: process.env.VUE_APP_API_BASE_URL_AUTH + '/oauth/token?grant_type=password&username=' + name + '&password=' + password,
@@ -129,7 +128,7 @@ export default {
         this.setUser(user);
 
         //获取角色
-        getRoles().then(result => {
+        this.getRoles().then(result => {
           const data = result.data;
           if(data&&data.success) {
             this.setRoles(this.loadRole(data.data))
@@ -137,7 +136,7 @@ export default {
         });
 
         //获取菜单
-        getMenus().then(result => {
+        this.getMenus().then(result => {
           const data = result.data;
           if(data&&data.success) {
             this.loadMenuRoute(data.data);

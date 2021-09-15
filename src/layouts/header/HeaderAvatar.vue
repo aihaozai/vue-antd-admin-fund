@@ -24,7 +24,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import {logout} from '@/services/user'
+import {logout,removeSession} from '@/services/user'
 import {removeAuthorization} from '@/utils/request'
 export default {
   name: 'HeaderAvatar',
@@ -37,10 +37,7 @@ export default {
         const data = res.data;
         if(data&&data.success) {
           this.$message.success(data.data);
-          localStorage.removeItem(process.env.VUE_APP_ROUTES_KEY)
-          localStorage.removeItem(process.env.VUE_APP_PERMISSIONS_KEY)
-          localStorage.removeItem(process.env.VUE_APP_ROLES_KEY)
-          removeAuthorization();
+          this.removeSession();
           this.$router.push('/login');
         }
       });
