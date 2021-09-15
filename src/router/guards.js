@@ -45,7 +45,7 @@ const loginGuard = (to, from, next, options) => {
  */
 const authorityGuard = (to, from, next, options) => {
   const {store, message} = options
-  const permissions = store.getters['account/permissions']
+  const permissions = store.getters['account/menus']
   const roles = store.getters['account/roles']
   if (!hasAuthority(to, permissions, roles)) {
     message.warning(`对不起，您无权访问页面: ${to.fullPath}，请联系管理员`)

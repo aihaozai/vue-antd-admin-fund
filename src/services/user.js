@@ -1,6 +1,5 @@
 import {LOGIN, ROUTES} from '@/services/api'
-import {request, METHOD, removeAuthorization} from '@/utils/request'
-
+import {request, METHOD} from '@/utils/request'
 /**
  * 登录服务
  * @param name 账户名
@@ -18,14 +17,19 @@ export async function getRoutesConfig() {
   return request(ROUTES, METHOD.GET)
 }
 
+export async function getRoles() {
+  return request(process.env.VUE_APP_API_BASE_URL_AUTH + '/role/findRoleByCurrentUser', METHOD.GET)
+}
+
+export async function getMenus() {
+  return request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/findMenuByCurrentUser', METHOD.GET)
+}
+
 /**
  * 退出登录
  */
-export function logout() {
-  localStorage.removeItem(process.env.VUE_APP_ROUTES_KEY)
-  localStorage.removeItem(process.env.VUE_APP_PERMISSIONS_KEY)
-  localStorage.removeItem(process.env.VUE_APP_ROLES_KEY)
-  removeAuthorization()
+export async function logout() {
+  return request(process.env.VUE_APP_API_BASE_URL_AUTH + '/logout',METHOD.GET);
 }
 export default {
   login,

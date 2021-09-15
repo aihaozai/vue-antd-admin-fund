@@ -74,9 +74,8 @@
 </template>
 
 <script>
-import {request, METHOD} from '@/utils/request'
 import CommonLayout from '@/layouts/CommonLayout'
-//import {getRoutesConfig} from '@/services/user'
+import {getRoles, getMenus} from '@/services/user'
 import {setAuthorization, removeAuthorization} from '@/utils/request'
 import {loadRoutes, formatMenuRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
@@ -102,7 +101,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('account', ['setUser', 'setPermissions', 'setRoles']),
+    ...mapMutations('account', ['setUser', 'setPermissions', 'setRoles', 'setMenus']),
     onSubmit (e) {
       e.preventDefault()
       this.form.validateFields((err) => {
@@ -127,20 +126,27 @@ export default {
       const loginRes = res.data.data
       if (res.status >= 0) {
         const {user} = loginRes
-        this.setUser(user)
-        //获取路由配置
-        request( process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/findMenuByCurrentUser', METHOD.GET).then(result => {
+        this.setUser(user);
+
+        //获取角色
+        getRoles().then(result => {
+          const data = result.data;
+          if(data&&data.success) {
+            this.setRoles(this.loadRole(data.data))
+          }
+        });
+
+        //获取菜单
+        getMenus().then(result => {
           const data = result.data;
           if(data&&data.success) {
             this.loadMenuRoute(data.data);
-            let concatPermission  = user['authorities'].concat(this.loadMenuPermissions(data.data));
-            this.setPermissions(concatPermission);
+            this.setPermissions(user['authorities']);
+            this.setMenus(this.loadMenuPermissions(data.data));
             this.$router.push('/system/menu')
           }
         })
 
-        //const {user, permissions, roles} = loginRes
-        // this.setRoles(roles)
         setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)},AUTH_TYPE.BEARER);
         this.$message.success('登录成功!', 3)
       } else {
@@ -167,6 +173,14 @@ export default {
         permission.push(o)
       }
       return permission;
+    },
+    loadRole(data){
+      let role = [];
+      for (const obj of data) {
+        let o = {id: obj.code};
+        role.push(o)
+      }
+      return role;
     }
   },
 }

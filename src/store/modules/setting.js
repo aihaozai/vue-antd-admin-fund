@@ -25,8 +25,8 @@ export default {
   getters: {
     menuData(state, getters, rootState) {
       if (state.filterMenu) {
-        const {permissions, roles} = rootState.account
-        return filterMenu(deepClone(state.menuData), permissions, roles)
+        const {menus, roles} = rootState.account
+        return filterMenu(deepClone(state.menuData), menus, roles)
       }
       return state.menuData
     },
