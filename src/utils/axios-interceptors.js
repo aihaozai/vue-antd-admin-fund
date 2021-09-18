@@ -1,5 +1,7 @@
 import Cookie from 'js-cookie'
 import {errorInfo} from '@/utils/notificationUtil'
+import {setAuthorization, removeAuthorization, AUTH_TYPE} from '@/utils/request'
+import axios from 'axios'
 
 // 401拦截
 const resp401 = {
@@ -80,12 +82,35 @@ const reqCommon = {
    * @param config axios config
    * @param options 应用配置 包含: {router, i18n, store, message}
    * @returns {*}
-   */
-  onFulfilled(config, options) {
+   */ async onFulfilled(config, options) {
     const {message} = options
     const {url, xsrfCookieName} = config
+    const obj = Cookie.get('AuthorizationTime');
+    if (obj) {
+      console.log(Cookie.get('xsrfRefreshToken'))
+      console.log(obj)
+      console.log((new Date(obj['AuthorizationTime']).getTime() - new Date().getTime()) / 1000, obj['xsrfRefreshToken'])
+    }
     if (url.indexOf('/oauth/token') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
-      message.warning('认证 token 已过期，请重新登录')
+      message.warning('认证 token 已过期，请重新登录');
+      this.$router.push('/login');
+    }
+    if (url.indexOf('/oauth/token') === -1 && obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) <= (3 * 60)) {
+      removeAuthorization()
+      await axios({
+        method: 'POST',
+        url: process.env.VUE_APP_API_BASE_URL_AUTH + '/oauth/token?grant_type=refresh_token&refresh_token=' + Cookie.get('xsrfRefreshToken'),
+        auth: {'username': 'auth_simple', 'password': 'haozai'}
+      }).then(res => {
+        if (res.status >= 0) {
+          const resData = res.data.data;
+          setAuthorization({
+            token: resData['access_token'],
+            expireAt: new Date(resData.expireAt),
+            refreshToken: resData['refresh_token']
+          }, AUTH_TYPE.BEARER);
+        }
+      })
     }
     return config
   },

@@ -3,12 +3,15 @@ import Cookie from 'js-cookie'
 
 // 跨域认证信息 header 名
 const xsrfHeaderName = 'Authorization'
+const xsrfHeaderNameTime = 'AuthorizationTime'
+const xsrfRefreshToken = 'xsrfRefreshToken'
 
 axios.defaults.timeout = 5000
 axios.defaults.withCredentials= true
 axios.defaults.xsrfHeaderName= xsrfHeaderName
 axios.defaults.xsrfCookieName= xsrfHeaderName
-
+axios.defaults.xsrfHeaderNameTime= xsrfHeaderNameTime
+axios.defaults.xsrfRefreshToken= xsrfRefreshToken
 // 认证类型
 const AUTH_TYPE = {
   BEARER: 'Bearer',
@@ -56,6 +59,8 @@ function setAuthorization(auth, authType = AUTH_TYPE.BEARER) {
   switch (authType) {
     case AUTH_TYPE.BEARER:
       Cookie.set(xsrfHeaderName, 'Bearer ' + auth.token, {expires: auth.expireAt});
+      Cookie.set(xsrfHeaderNameTime, auth.expireAt, {expires: auth.expireAt});
+      Cookie.set(xsrfRefreshToken, auth.refreshToken );
       break
     case AUTH_TYPE.BASIC:
     case AUTH_TYPE.AUTH1:

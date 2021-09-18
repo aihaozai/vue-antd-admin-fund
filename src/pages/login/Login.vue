@@ -146,7 +146,7 @@ export default {
           }
         })
 
-        setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt)},AUTH_TYPE.BEARER);
+        setAuthorization({token: loginRes['access_token'], expireAt: new Date(loginRes.expireAt), refreshToken: loginRes['refresh_token']},AUTH_TYPE.BEARER);
         this.$message.success('登录成功!', 3)
       } else {
         this.error = loginRes.message
