@@ -91,11 +91,11 @@ const reqCommon = {
       console.log(obj)
       console.log((new Date(obj['AuthorizationTime']).getTime() - new Date().getTime()) / 1000, obj['xsrfRefreshToken'])
     }
-    if (url.indexOf('/oauth/token') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
+    if (url.indexOf('/oauth/token') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName) && !obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) > (3 * 60)) {
       message.warning('认证 token 已过期，请重新登录');
       this.$router.push('/login');
     }
-    if (url.indexOf('/oauth/token') === -1 && obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) <= (3 * 60)) {
+    if (url.indexOf('/logout') ===-1 && url.indexOf('/oauth/token') === -1 && obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) <= (3 * 60)) {
       removeAuthorization()
       await axios({
         method: 'POST',
