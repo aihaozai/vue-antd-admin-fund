@@ -28,11 +28,14 @@ const resp401 = {
     const {message} = options
     const {response} = error
     if (response.status === 401) {
-     if(response.data.data['error_description']){
+      if(response.data.msg){
+        message.error(response.data.msg)
+        this.$router.push('/login');
+      }else if(response.data.data['error_description']){
        message.error(response.data.data['error_description'])
-     }else{
+      }else{
        message.error('无此权限')
-     }
+      }
     }
     return Promise.reject(error)
   }
@@ -49,7 +52,7 @@ const resp403 = {
   onRejected(error, options) {
     const {message} = options
     const {response} = error
-    if (response.status === 403) {
+    if (response && response.status === 403) {
       message.error('请求被拒绝')
     }
     return Promise.reject(error)
@@ -59,8 +62,8 @@ const resp403 = {
 const resp500 = {
   onRejected(error) {
     const {response} = error
-    if (response.status === 500) {
-      errorInfo(response.data.error||response.data.message||'服务器出错',response.data.data)
+    if (response && response.status === 500) {
+      errorInfo(response.data.error||response.data.message||'服务器出错',response.data.error||response.data.data)
     }
     return Promise.reject(error)
   }
@@ -69,7 +72,7 @@ const resp500 = {
 const resp503 = {
   onRejected(error) {
     const {response} = error
-    if (response.status === 503) {
+    if (response && response.status === 503) {
       errorInfo('连接服务器失败',response.data.error)
     }
     return Promise.reject(error)
@@ -92,7 +95,7 @@ const reqCommon = {
       console.log((new Date(obj['AuthorizationTime']).getTime() - new Date().getTime()) / 1000, obj['xsrfRefreshToken'])
     }
     if (url.indexOf('/oauth/token') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName) && !obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) > (3 * 60)) {
-      message.warning('认证 token 已过期，请重新登录');
+      message.warning('认证已过期，请重新登录');
       this.$router.push('/login');
     }
     if (url.indexOf('/logout') ===-1 && url.indexOf('/oauth/token') === -1 && obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) <= (3 * 60)) {
