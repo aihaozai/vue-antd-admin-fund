@@ -165,7 +165,13 @@ const routerMap = {
   },
   role: {
     component: () => import('@/pages/system/role/RoleList')
-  }
+  },
+  fundSub: {
+    component: () => import('@/pages/fund/subscribeFund')
+  },
+  fundChart: {
+    component: () => import('@/pages/fund/fundChart')
+  },
 }
 export default routerMap
 

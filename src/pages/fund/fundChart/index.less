@@ -1,0 +1,75 @@
+.project-list {
+  .card-title {
+    span{
+      vertical-align: middle;
+      &:last-child{
+        margin-left: 12px;
+      }
+    }
+  }
+  .project-item {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    overflow: hidden;
+    font-size: 12px;
+    color: inherit;
+    .group{
+      color: @text-color;
+      flex: 1 1 0;
+      &:hover {
+        color: @primary-color;
+      }
+    }
+    .datetime {
+      color: @text-color-second;
+      flex: 0 0 auto;
+    }
+  }
+  .ant-card-meta-description {
+    height: 44px;
+    line-height: 22px;
+    overflow: hidden;
+  }
+}
+
+.fund-list-max-height {
+  max-height: 650px;
+  overflow: auto;
+}
+
+.fundChart {
+  height: 500px;
+  width: 600px;
+  display: inline-block;
+  position: relative;
+}
+
+.block {
+  text-align: center;
+}
+
+/* The ghost, nudged to maintain perfect centering */
+.block:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em; /* Adjusts for spacing */
+}
+
+.centered {
+  display: inline-block;
+  vertical-align: middle;
+  width: 75%;
+  margin: 20px 0px;
+}
+
+.fundChartName {
+  position: absolute;
+  bottom: 0px;
+  margin: 13px;
+  left: 197px;
+  color: @primary-color;
+  z-index: 999
+}

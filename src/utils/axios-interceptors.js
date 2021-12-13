@@ -30,7 +30,7 @@ const resp401 = {
     if (response.status === 401) {
       if(response.data.msg){
         message.error(response.data.msg)
-        this.$router.push('/login');
+        options.router.push('/login');
       }else if(response.data.data['error_description']){
        message.error(response.data.data['error_description'])
       }else{
@@ -89,11 +89,7 @@ const reqCommon = {
     const {message} = options
     const {url, xsrfCookieName} = config
     const obj = Cookie.get('AuthorizationTime');
-    if (obj) {
-      console.log(Cookie.get('xsrfRefreshToken'))
-      console.log(obj)
-      console.log((new Date(obj['AuthorizationTime']).getTime() - new Date().getTime()) / 1000, obj['xsrfRefreshToken'])
-    }
+
     if (url.indexOf('/oauth/token') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName) && !obj && ((new Date(obj).getTime() - new Date().getTime()) / 1000) > (3 * 60)) {
       message.warning('认证已过期，请重新登录');
       this.$router.push('/login');

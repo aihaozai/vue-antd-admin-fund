@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-auth="http://www.w3.org/1999/xhtml">
   <a-card>
     <div :class="advanced ? 'search' : null">
       <a-form layout="horizontal">
@@ -27,8 +27,7 @@
     </div>
     <div>
       <a-space class="operator">
-        <a-button @click="addNew" type="primary">新增</a-button>
-        <a-button @click="addNew" type="danger">删除</a-button>
+        <a-button @click="addNew" type="primary" v-auth:permission="`menu:add`">新增</a-button>
       </a-space>
       <div>
         <a-skeleton :loading="loading" active >
@@ -50,7 +49,7 @@
             <a @click="editRecord(record)" style="margin-right: 8px" v-auth:permission="`menu:edit`">
               <a-icon type="edit"/>编辑
             </a>
-            <a-popconfirm placement="topRight" ok-text="Yes" cancel-text="No"  @confirm="deleteRecord(record.key)" >
+            <a-popconfirm placement="topRight" ok-text="Yes" cancel-text="No"  v-auth:permission="`menu:del`" @confirm="deleteRecord(record.key)" >
               <template slot="title">
                 <p>{{ $t('deleteMenu') }}</p>
               </template>
@@ -68,7 +67,7 @@
     </div>
       <a-modal
               v-model="modalVisible"
-              :title="$t('addMenu')"
+              :title="menuTitle"
               centered
               :maskClosable="false"
               @cancel="() => closeModel()"
@@ -145,11 +144,12 @@ export default {
       confirmLoading: false,
       query: {},
       authorityVisible: false,
-      menuId: null
+      menuId: null,
+      menuTitle: null
     }
   },
   authorize: {
-   // editRecord: 'delete'
+
   },
   created() {
    this.page();
@@ -172,6 +172,7 @@ export default {
     editRecord(record) {
       this.record = record;
       this.modalVisible = true;
+      this.menuTitle = this.$i18n.t('editMenu')
     },
     deleteRecord(key) {
       request(process.env.VUE_APP_API_BASE_URL_AUTH + '/menu/delete/'+key, METHOD.DELETE).then(res => {
@@ -204,6 +205,7 @@ export default {
     addNew () {
       this.record = null;
       this.modalVisible = true;
+      this.menuTitle = this.$i18n.t('addMenu')
     },
     onSelect(selectedKeys, info) {
       console.log('selected', selectedKeys, info);
@@ -216,7 +218,6 @@ export default {
             const data = res.data;
             if(data&&data.success){
               this.confirmLoading = this.modalVisible = false;
-              this.confirmLoading = true;
               successful('添加成功')
             }
           })

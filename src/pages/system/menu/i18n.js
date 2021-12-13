@@ -2,6 +2,7 @@ module.exports = {
   messages: {
     CN: {
       addMenu: '新增菜单',
+      editMenu: '编辑菜单',
       name: '菜单名称',
       nameMsg: '请输入菜单名称',
       lengthMsg10: '长度应为0到10',
@@ -29,6 +30,7 @@ module.exports = {
     },
     HK: {
       addMenu: '新增菜單',
+      editMenu: '编辑菜單',
       name: '菜單名稱',
       nameMsg: '請輸入菜單名稱',
       lengthMsg10: '長度應為0到10',
@@ -56,6 +58,7 @@ module.exports = {
     },
     US: {
       addMenu: 'Add Menu',
+      editMenu: 'Edit Menu',
       name: 'Menu Name',
       nameMsg: 'Please input Menu name',
       lengthMsg10: 'Length should be 0 to 10',
