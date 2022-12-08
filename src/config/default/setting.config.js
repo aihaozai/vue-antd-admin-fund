@@ -28,10 +28,10 @@ module.exports = {
     direction: 'left'                   //动画方向，切换页面时动画的方向，参考 ./animate.config.js
   },
   footerLinks: [                        //页面底部链接，{link: '链接地址', name: '名称/显示文字', icon: '图标，支持 ant design vue 图标库'}
-    {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号-1'},
+    {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号'},
     {link: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44078102440951', name: '粤公网安备 44078102440951号', img:'beian'},
-    {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号-2'},
-    {link: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44078102440952', name: '粤公网安备 44078102440952号', img:'beian'},
+    // {link: 'https://beian.miit.gov.cn', name: '粤ICP备2021078843号-2'},
+    // {link: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44078102440952', name: '粤公网安备 44078102440952号', img:'beian'},
   ],
   layoutFooter: false                   //页面底部是否显示
 }
